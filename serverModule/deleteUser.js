@@ -1,8 +1,4 @@
 function deleteUser(client,groupId,userId){
-    var groupId = groupId;
-
-    var userId = userId;
-
     // 调用删除用户
     client.deleteUser(groupId, userId).then(function(result) {
         console.log('删除用户');

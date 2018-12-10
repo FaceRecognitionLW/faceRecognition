@@ -1,6 +1,4 @@
 function getGroupUsers(client,groupId){
-    var groupId = groupId;
-
     // 调用获取用户列表
     client.getGroupUsers(groupId).then(function(result) {
         console.log(JSON.stringify(result));

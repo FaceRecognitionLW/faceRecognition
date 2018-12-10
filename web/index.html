@@ -5,6 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <style>
+        video{
+            width: 200px;
+            height: 200px;
+            border: 1px solid #ccc;
+        }
+        #showFace {
+            width: 200px;
+            height: 180px;
+            border: 1px solid #ccc;
+        }
+        #showFace img{
+            width: 100%;
+            height: 100%;
+        }
+        canvas {
+            border: 1px solid #ccc;
+        }
+    </style>
 </head>
 <body>
     <div id="container">
@@ -12,7 +31,64 @@
             <input type="file" name="face">
             <input type="submit" value="提交" name="submit">
         </form>
+        <div id="photo">
+            <video id="video"></video>
+            <button id="btn">拍照</button>
+            <canvas id="canvas"></canvas>
+            <div id="showFace">
+                <img src="" alt="" id="img">
+            </div>
+        </div>
     </div>
     <script src="./js/index.js"></script>
+    <script>
+        let canvas = document.getElementById('canvas'),
+            video = document.getElementById('video'),
+            img = document.getElementById('img'),
+            btn = document.getElementById('btn'),
+            context = canvas.getContext('2d'),
+            canvasWidth = 0,
+            canvasHeight = 0,
+            // 是否开始捕获媒体
+            streaming = false;
+        
+        // 捕获用户媒体，包括视频和音频
+        navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: false
+        })
+        .then(stream => {
+            // 将捕获的视频传递给video，放弃window.URL.createObjectURL(stream)的使用
+            video.srcObject = stream;
+            // 播放视频
+            video.play();
+        });
+
+        function tackcaptrue(){
+            console.log('拍照啦');
+            // 需要判断媒体流是否就绪
+            if(streaming){
+                // 将视频画面捕捉后绘制到canvas里面
+                context.drawImage(video,0,0,220,175);
+                // 将canvas的数据传送到img里
+                img.src = canvas.toDataURL('image/png');
+            }
+        }
+        // 点击拍照
+        btn.addEventListener('click',tackcaptrue,false);
+        video.addEventListener('canplay',function(e){
+            if(!streaming){
+                let videoWidth = parseInt(getStyle(video,"width")),
+                    videoHeight = parseInt(getStyle(video,"height"));
+                // canvasHeight = videoHeight/(videoWidth/canvasWidth);
+                canvas.setAttribute('width',videoWidth);
+                canvas.setAttribute('height',videoHeight);
+                streaming = true;
+            }
+        },false);
+        function getStyle(obj,attr){
+            return window.getComputedStyle?window.getComputedStyle(obj)[attr]:obj.currentStyle[attr];
+        }
+    </script>
 </body>
 </html>

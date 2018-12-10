@@ -1,6 +1,4 @@
 function createGroup(client,groupId){
-    var groupId = groupId;
-
     // 调用创建用户组
     client.groupAdd(groupId).then(function(result) {
         console.log('创建用户组');

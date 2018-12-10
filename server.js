@@ -5,17 +5,38 @@ const querystring = require('querystring');
 const bodyParser = require('body-parser');
 const multer = require('multer');
 const objMulter = multer();
-// 人脸交互功能模块
+/*人脸交互功能模块*/ 
+// 创建组
+const CREATEGROUP = require('./serverModule/createGroup.js');
+// 删除组
+const DELETEGROUP = require('./serverModule/deleteGroup.js');
+// 人脸检测
 const FACEDETECT = require('./serverModule/detect.js');
+// 人脸搜索
 const FACESEARCH = require('./serverModule/search.js');
+// 人脸注册
 const FACEREGIST = require('./serverModule/regist.js');
+// 人脸更新
 const FACEUPDATE = require('./serverModule/update.js');
+// 根据人脸查询用户信息
 const FACESEARCHUSERINFO = require('./serverModule/searchUserInfo.js');
+// 获取用户人脸列表
 const FACESEARCHUSERFACEINFO = require('./serverModule/searchUserFaceInfo.js');
+// 获取组用户
 const GETGROUPUSERS = require('./serverModule/getGroupUsers.js');
+// 删除人脸
+const DELETEFACE = require('./serverModule/deleteFace.js');
+// 复制用户
+const COPYUSER = require('./serverModule/copyUser.js');
+// 删除用户
+const DELETEUSER = require('./serverModule/deleteUser.js');
+// 组列表查询
+const GETGROUPLIST = require('./serverModule/getAllGroupList.js');
+// 身份验证
+const IDCHECK = require('./serverModule/idCheck.js');
+
 // 关于client
 const AipFaceClient = require("baidu-aip-sdk").face;
-
 // 设置APPID/AK/SK
 const APP_ID = "14870513";
 const API_KEY = "7FBjTenAnLTg5kATSpQO2cXj";
@@ -65,16 +86,31 @@ faceRoute.post('/detection',function(req,res){
     req.on('end',function(){
         // 人脸检测
         // FACEDETECT(client,base64Img);
+        // 人脸注册
+        // FACEREGIST(client,base64Img);  
         // 人脸更新
         // FACEUPDATE(client,base64Img);
         // 人脸用户信息查询
-        FACESEARCHUSERINFO(client);
+        // FACESEARCHUSERINFO(client);
         // 人脸信息查询
-        FACESEARCHUSERFACEINFO(client,"user1","group1");
+        // FACESEARCHUSERFACEINFO(client,"user1","group1");
         // 获取某个组的所有用户
-        GETGROUPUSERS(client,"group1");
-        // 人脸注册
-        // FACEREGIST(client,base64Img);        
+        // GETGROUPUSERS(client,"group1");
+        // CREATEGROUP(client,'group2');
+        // 人脸复制到另外一个组
+        // COPYUSER(client,"user1","group1","group2");
+        // 删除用户
+        // DELETEUSER(client,'group2','user1');
+        // 删除组
+        // DELETEGROUP(client,'group2');
+        // 组列表查询
+        // GETGROUPLIST(client);
+        // 身份验证
+        let idCard = "530324199802230329";
+        let name = '刘琼';
+        IDCHECK(client,base64Img,idCard,name);
+        // 删除某个人脸
+        // DELETEFACE(client);
     })
     res.end('detection');
 })
