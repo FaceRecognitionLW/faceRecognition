@@ -1,7 +1,9 @@
 @charset "utf-8";
 @navHeight: 2.5rem;
 @navColor: rgb(55,54,56);
-@footerColor: rgb(248,122,88);
+@footerHeight: 2.5rem;
+@footerBgColor: rgb(248,122,88);
+@footerColor: rgb(246,247,247);
 
 article {
     width: 100%;
@@ -11,7 +13,7 @@ article {
 }
 // 开场动画
 #stage {
-    // display: none;
+    display: none;
     position: absolute;
     width: 100%;
     height: 100%;
@@ -82,6 +84,35 @@ footer {
     position: fixed;
     bottom: 0;
     width: 100%;
-    height: @navHeight;
-    background-color: #ccc;
+    height: @footerHeight;
+    background-color: @footerBgColor;
+}
+footer ul {
+    font-size: 0;
+}
+footer ul li{
+    box-sizing: border-box;
+    display: inline-block;
+    width: calc(100% / 3);
+    height: 100%;
+    color: @footerColor;
+    font-size: .5rem;
+    text-align: center;
+    
+}
+footer li i {
+    display: inline-block;
+    box-sizing: border-box;
+    height: 1.5rem;
+    padding-top: .2rem;
+}
+footer li p {
+    letter-spacing: 2px;
+    line-height: 1rem;
+}
+footer ul li:not(last-child){
+    border-right: 1px solid #fff;
+}
+footer ul li i.iconfont {
+    font-size: 1.2rem;
 }
