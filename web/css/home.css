@@ -2,7 +2,7 @@
 article {
   width: 100%;
   height: 100%;
-  background: url('../images/home.png') no-repeat fixed;
+  background: url('../images/home2.png') no-repeat fixed;
   background-size: cover;
 }
 #stage {
@@ -37,7 +37,7 @@ article {
     transform: rotate(360deg);
   }
 }
-nav {
+header {
   position: relative;
   width: 100%;
   height: 2.5rem;
@@ -47,14 +47,14 @@ nav {
   text-align: center;
   font-size: 1.2rem;
 }
-nav #user,
-nav #add {
+header #user,
+header #add {
   position: absolute;
   top: 0;
   width: 2.5rem;
   height: 100%;
 }
-nav #user {
+header #user {
   left: 0;
 }
 #head-img {
@@ -66,9 +66,10 @@ nav #user {
   background-size: cover;
   margin: .25rem auto;
 }
-nav #add {
+header #add {
   right: 0;
   font-size: 1.8rem;
+  color: #f87a58;
 }
 footer {
   position: fixed;
@@ -89,6 +90,9 @@ footer ul li {
   font-size: .5rem;
   text-align: center;
 }
+footer ul li:first-child {
+  color: #373638;
+}
 footer li i {
   display: inline-block;
   box-sizing: border-box;
@@ -98,9 +102,6 @@ footer li i {
 footer li p {
   letter-spacing: 2px;
   line-height: 1rem;
-}
-footer ul li:not(last-child) {
-  border-right: 1px solid #fff;
 }
 footer ul li i.iconfont {
   font-size: 1.2rem;
