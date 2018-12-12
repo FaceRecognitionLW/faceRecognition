@@ -2,8 +2,11 @@
 article {
   width: 100%;
   height: 100%;
+  background: url('../images/home.png') no-repeat fixed;
+  background-size: cover;
 }
 #stage {
+  display: none;
   position: absolute;
   width: 100%;
   height: 100%;
@@ -33,4 +36,44 @@ article {
   to {
     transform: rotate(360deg);
   }
+}
+nav {
+  position: relative;
+  width: 100%;
+  height: 2.5rem;
+  background-color: #373638;
+  color: #fff;
+  line-height: 2.5rem;
+  text-align: center;
+  font-size: 1.2rem;
+}
+nav #user,
+nav #add {
+  position: absolute;
+  top: 0;
+  width: 2.5rem;
+  height: 100%;
+}
+nav #user {
+  left: 0;
+}
+#head-img {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: 1px solid #e5b7b7;
+  background: #fff url('../images/headerImg.png') no-repeat;
+  background-size: cover;
+  margin: .25rem auto;
+}
+nav #add {
+  right: 0;
+  font-size: 1.8rem;
+}
+footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 2.5rem;
+  background-color: #ccc;
 }
