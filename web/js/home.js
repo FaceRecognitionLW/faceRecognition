@@ -17,6 +17,8 @@
         this.handleCircleMenuClick();
         // footer事件委托
         this.handleFooterClick();
+        // admin-com事件委托
+        this.handleAdminCom();
     }
     Object.defineProperty(Home.prototype,'constructor',{
         enumerable: false,
@@ -109,7 +111,7 @@
                 var target = e.target||e.srcElement;
                 switch(target.id){
                     case 'head-photo':
-                        oMenu.style.transform = "scale(1)";
+                        // oMenu.style.transform = "scale(1)";
                         break;
                     case 'add':
                         oMenu.style.transform = "scale(1)";
@@ -161,13 +163,43 @@
             }
         },
         handleFooterClick: function(){
-            var oFooter = doc.querySelector('footer');
+            var oFooter = doc.querySelector('footer'),
+                oAminCom = doc.getElementById('admin-com');
             oFooter.ontouchstart = function(e){
                 e = e||window.e;
                 var target = e.target||e.srcElement;
                 console.log(target);
                 switch(target.className) {
                     case 'signIn':
+                        break;
+                    case 'menage':
+                        oAminCom.style.transform = 'scale(1)';
+                        break;
+                }
+            }
+        },
+        handleAdminCom: function(){
+            var oAdminCom = doc.getElementById('admin-com'),
+                oPublishSign = doc.getElementById('pushlish-sign');
+            oAdminCom.ontouchstart = function(e){
+                e = e||window.e;
+                var target = e.target||e.srcElement;
+                if(target.nodeName=="BUTTON"){  
+                    oPublishSign.style.transform = 'scale(1)';
+                }
+            };
+            oPublishSign.ontouchstart = function(e){
+                e = e||window.e;
+                var target = e.target||e.srcElement;
+                e.stopPropagation();
+                switch(target.className) {
+                    case 'iconfont icon-guanbi close':
+                        oPublishSign.style.transform = 'scale(0)';
+                        break;
+                    case 'reset':
+                        oPublishSign.style.transform = 'scale(0)';
+                        break;
+                    case 'submit':
                         break;
                 }
             }

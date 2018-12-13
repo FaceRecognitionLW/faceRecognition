@@ -17,15 +17,14 @@
                     <img src="./images/headerImg.png" alt="headImg" id="head-photo">
                 </div>
             </div>
-            info
-            <i class="iconfont icon-gengduo" id="add"></i>
+            <p id="search">
+                <i class="iconfont icon-sousuotianchong"></i>
+                <input type="text" placeholder="搜索社群名" name="search">
+            </p>
+            <i class="iconfont icon-zuoyouduiqi" id="add"></i>
         </header>
         <div id="menu">
             <ul>
-                <li class="edit">
-                    <i class="iconfont icon-wenbenbianji"></i>
-                    <p>更改信息</p>
-                </li>
                 <li class="publish">
                     <i class="iconfont icon-dingwei"></i>
                     <p>发布签到</p>
@@ -34,12 +33,16 @@
                     <i class="iconfont icon-tianjia"></i>
                     <p>添加社群</p>
                 </li>
-                <li class="history">
-                    <i class="iconfont icon-gengduo"></i>
+                <li class="sign-history">
+                    <i class="iconfont icon-get"></i>
                     <p>签到历史</p>
                 </li>
+                <li class="publish-history">
+                    <i class="iconfont icon-fabusekuai"></i>
+                    <p>发布历史</p>
+                </li>
                 <li class="menage">
-                    <i class="iconfont icon-qun"></i>
+                    <i class="iconfont icon-zuzhiqunzu"></i>
                     <p>管理社群</p>
                 </li>
                 <li class="close">
@@ -78,7 +81,7 @@
                         <div class="info">
                             <p>数媒1501班</p>
                             <p><i class="iconfont icon-ditu-dibiao"></i><span>信息院</span></p>
-                            <p><i class="iconfont icon-shirenrenzheng"></i><span>哈哈哈</span></p>
+                            <p><i class="iconfont icon-icon_zhanghao"></i><span>哈哈哈</span></p>
                             <p><i class="iconfont icon-tixingshixin"></i><time class="start">2018-12-13 11:00</time>~<time class="end">12:00</time></p>
                         </div>
                         <button class="signIn"></button>
@@ -90,7 +93,7 @@
                         <div class="info">
                             <p>数媒1501班</p>
                             <p><i class="iconfont icon-ditu-dibiao"></i><span>信息院</span></p>
-                            <p><i class="iconfont icon-shirenrenzheng"></i><span>哈哈哈</span></p>
+                            <p><i class="iconfont icon-icon_zhanghao"></i><span>哈哈哈</span></p>
                             <p><i class="iconfont icon-tixingshixin"></i><time class="start">2018-12-13 11:00</time>~<time class="end">12:00</time></p>
                         </div>
                         <button class="signIn"></button>
@@ -102,7 +105,7 @@
                         <div class="info">
                             <p>数媒1501班</p>
                             <p><i class="iconfont icon-ditu-dibiao"></i><span>信息院</span></p>
-                            <p><i class="iconfont icon-shirenrenzheng"></i><span>哈哈哈</span></p>
+                            <p><i class="iconfont icon-icon_zhanghao"></i><span>哈哈哈</span></p>
                             <p><i class="iconfont icon-tixingshixin"></i><time class="start">2018-12-13 11:00</time>~<time class="end">12:00</time></p>
                         </div>
                         <button class="signIn"></button>
@@ -114,7 +117,7 @@
                         <div class="info">
                             <p>数媒1501班</p>
                             <p><i class="iconfont icon-ditu-dibiao"></i><span>信息院</span></p>
-                            <p><i class="iconfont icon-shirenrenzheng"></i><span>哈哈哈</span></p>
+                            <p><i class="iconfont icon-icon_zhanghao"></i><span>哈哈哈</span></p>
                             <p><i class="iconfont icon-tixingshixin"></i><time class="start">2018-12-13 11:00</time>~<time class="end">12:00</time></p>
                         </div>
                         <button class="signIn"></button>
@@ -126,19 +129,79 @@
         <footer>
             <ul>
                 <li class="signIn">
-                    <i class="iconfont icon-ditu-qi"></i>
+                    <i class="iconfont icon-ditu-tuding"></i>
                     <p>签到</p>
                 </li>
-                <li class="history">
-                    <i class="iconfont icon-ditu-qipao"></i>
+                <li class="sign-history">
+                    <i class="iconfont icon-get"></i>
                     <p>签到历史</p>
                 </li>
+                <li class="publish-history">
+                    <i class="iconfont icon-icon_fabu"></i>
+                    <p>发布历史</p>
+                </li>
                 <li class="menage">
-                    <i class="iconfont icon-qunzutianchong"></i>
+                    <i class="iconfont icon-zuzhiqunzu"></i>
                     <p>管理社群</p>
                 </li>
             </ul>
         </footer>
+        <div id="admin-com">
+            <ul>
+                <li>
+                    <div class="img">
+                        <img src="./images/com/1.png" alt="">
+                    </div>
+                    <div class="info">
+                        <p>数媒1501班</p>
+                        <p><i class="iconfont icon-icon_zhanghao"></i>创建人</p>
+                        <p><i class="iconfont icon-qunzutianchong"></i>总人数</p>
+                        <p><i class="iconfont icon-get"></i><a href="">历史签到信息</a></p>
+                    </div>
+                    <button>发布签到</button>
+                </li>
+                <li>
+                    <div class="img">
+                        <img src="./images/com/1.png" alt="">
+                    </div>
+                    <div class="info">
+                        <p>数媒1501班</p>
+                        <p><i class="iconfont icon-icon_zhanghao"></i>创建人</p>
+                        <p><i class="iconfont icon-qunzutianchong"></i>总人数</p>
+                        <p><i class="iconfont icon-get"></i><a href="">历史签到信息</a></p>
+                    </div>
+                    <button>发布签到</button>
+                </li>
+                <li>
+                    <div class="img">
+                        <img src="./images/com/1.png" alt="">
+                    </div>
+                    <div class="info">
+                        <p>数媒1501班</p>
+                        <p><i class="iconfont icon-icon_zhanghao"></i>创建人</p>
+                        <p><i class="iconfont icon-qunzutianchong"></i>总人数</p>
+                        <p><i class="iconfont icon-get"></i><a href="">历史签到信息</a></p>
+                    </div>
+                    <button>发布签到</button>
+                </li>
+            </ul>
+            <div id="add-com-btn">
+                +
+            </div>
+            <div id="pushlish-sign">
+                <i class="iconfont icon-guanbi close"></i>
+                <p><i class="iconfont icon-ditu-dibiao"></i>地点</p>
+                <input type="text" name="addr">
+                <p><i class="iconfont icon-ditu-huan"></i>时间</p>
+                <input type="datetime-local" name="time">
+                <p><i class="iconfont icon-fabusekuai"></i>范围</p>
+                <input type="range" name="range" min="0" step="1" value="10">
+                <p><button class="reset">取消</button><button class="submit">提交</button></p>
+            </div>
+        </div>
+        <div id="add-com">
+            
+        </div>
         <div id="stage">
             <div id="loading">
                 <img src="./images/loading.png" alt="loading">

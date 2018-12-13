@@ -1,5 +1,6 @@
 @charset "utf-8";
 article {
+  position: relative;
   width: 100%;
   height: 100%;
   background: url('../images/home2.png') no-repeat fixed;
@@ -49,6 +50,7 @@ header {
   line-height: 2.5rem;
   text-align: center;
   font-size: 1.2rem;
+  z-index: 10;
 }
 header #user,
 header #add {
@@ -59,6 +61,30 @@ header #add {
 }
 header #user {
   left: 0;
+}
+header #search {
+  width: 14rem;
+  height: 2.5rem;
+  margin: auto;
+}
+header #search input,
+header #search i {
+  vertical-align: middle;
+}
+header #search input {
+  box-sizing: border-box;
+  width: 12rem;
+  height: 1.4rem;
+  outline: none;
+  border: none;
+  border-radius: .2rem;
+  background-color: #f6f7f7;
+  color: #373638;
+  font-size: .6rem;
+  letter-spacing: .05rem;
+}
+header #search i {
+  font-size: 1.4rem;
 }
 #head-img {
   width: 2rem;
@@ -75,7 +101,7 @@ header #user {
 }
 header #add {
   right: 0;
-  font-size: 1.8rem;
+  font-size: 1.4rem;
   color: #f87a58;
 }
 #menu {
@@ -99,8 +125,9 @@ header #add {
   margin-top: 1rem;
   margin-right: .4rem;
 }
-#menu li:first-child {
-  color: #f87a58;
+#menu li:first-child i {
+  color: #fff;
+  background-color: #f87a58;
 }
 #menu li i {
   display: inline-block;
@@ -176,6 +203,7 @@ header #add {
 section {
   width: 100%;
   padding-top: 2.5rem;
+  padding-bottom: 3rem;
 }
 #ckeck-info,
 #ckeck-info li {
@@ -245,6 +273,144 @@ section {
   width: 100%;
   height: 20rem;
 }
+#admin-com {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding-top: 2.5rem;
+  padding-bottom: 3rem;
+  background-color: #f6f7f7;
+  transform: scale(0);
+  transition-duration: .3s;
+}
+#admin-com li {
+  position: relative;
+  width: 100%;
+  margin-bottom: 1rem;
+  background-color: #fff;
+}
+#admin-com li > div {
+  display: inline-block;
+  vertical-align: middle;
+}
+#admin-com li .img {
+  width: 6rem;
+  height: 6rem;
+  margin: auto;
+}
+#admin-com li .img img {
+  width: 100%;
+  height: 100%;
+}
+#admin-com li .info p {
+  font-size: .8rem;
+  line-height: 1.4rem;
+  color: #666;
+}
+#admin-com li .info i {
+  margin-right: .4rem;
+}
+#admin-com li .info p:first-child {
+  color: #373638;
+}
+#admin-com li .info a:active {
+  color: #f87a58;
+}
+#admin-com button {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: .4rem;
+  margin: auto;
+  width: 4rem;
+  height: 2rem;
+  border: none;
+  border-radius: 2rem;
+  outline: none;
+  background-color: #f6f7f7;
+  color: #aaa;
+  transition-duration: .3s;
+}
+#admin-com button:focus {
+  background-color: #f87a58;
+  color: #f6f7f7;
+}
+#admin-com #add-com-btn {
+  width: 100%;
+  height: 4rem;
+  background-color: #f6c4b7;
+  color: #fff;
+  font-size: 3rem;
+  text-align: center;
+}
+#pushlish-sign {
+  box-sizing: border-box;
+  position: absolute;
+  top: 4rem;
+  left: 0;
+  right: 0;
+  width: 90%;
+  height: 19rem;
+  padding: .4rem 1rem;
+  margin: auto;
+  border-radius: .6rem;
+  box-shadow: 0 0 2rem #ccc;
+  background-color: #ebebeb;
+  transform: scale(0);
+  transition-duration: .3s;
+}
+#pushlish-sign p {
+  color: #999999;
+  margin: .6rem auto;
+}
+#pushlish-sign p:last-child {
+  text-align: center;
+}
+#pushlish-sign input {
+  width: 100%;
+  height: 2rem;
+  outline: none;
+  border: none;
+  box-shadow: 0 0 .3rem #ccc inset;
+  color: #999999;
+  font-size: .8rem;
+}
+#pushlish-sign input:focus {
+  box-shadow: 0 0 0.3rem #9bca3e inset;
+}
+#pushlish-sign button {
+  position: static;
+}
+#pushlish-sign button.submit {
+  margin-right: 1rem;
+  border: 1px solid #9bca3e;
+  color: #9bca3e;
+}
+#pushlish-sign button.submit:focus {
+  background-color: #9bca3e;
+  color: #fff;
+}
+#pushlish-sign button.reset {
+  border: 1px solid #ccc;
+  margin-right: 1rem;
+}
+#pushlish-sign button.reset:focus {
+  background-color: #ccc;
+  color: #fff;
+}
+#pushlish-sign i {
+  margin-right: .4rem;
+  color: #9bca3e;
+  font-size: 1rem;
+}
+#pushlish-sign .close {
+  position: absolute;
+  top: .1rem;
+  right: .1rem;
+  font-size: 1.8rem;
+}
 footer {
   position: fixed;
   bottom: 0;
@@ -252,6 +418,7 @@ footer {
   height: 3rem;
   border-radius: 1rem 1rem 0 0;
   background-color: #f87a58;
+  z-index: 10;
 }
 footer ul {
   font-size: 0;
@@ -259,7 +426,7 @@ footer ul {
 footer ul li {
   box-sizing: border-box;
   display: inline-block;
-  width: calc(33.33333333%);
+  width: calc(25%);
   height: 100%;
   color: #f6f7f7;
   font-size: .5rem;
