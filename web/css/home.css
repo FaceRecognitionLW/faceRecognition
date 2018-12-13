@@ -8,11 +8,13 @@ article {
 #stage {
   display: none;
   position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   background: url('../images/stage.png') no-repeat;
   background-size: cover;
-  z-index: 0;
+  z-index: 1;
 }
 #loading {
   position: absolute;
@@ -38,7 +40,8 @@ article {
   }
 }
 header {
-  position: relative;
+  position: fixed;
+  top: 0;
   width: 100%;
   height: 2.5rem;
   background-color: #373638;
@@ -62,20 +65,192 @@ header #user {
   height: 2rem;
   border-radius: 50%;
   border: 1px solid #e5b7b7;
-  background: #fff url('../images/headerImg.png') no-repeat;
+  background-color: #fff;
   background-size: cover;
   margin: .25rem auto;
+}
+#head-img img {
+  width: 100%;
+  height: 100%;
 }
 header #add {
   right: 0;
   font-size: 1.8rem;
   color: #f87a58;
 }
+#menu {
+  position: absolute;
+  top: 2.5rem;
+  left: 0;
+  width: 100%;
+  padding-bottom: 1rem;
+  box-shadow: 0 1rem 10rem #ccc;
+  background-color: #f3f3f5;
+  text-align: center;
+  z-index: 10;
+  transform: scale(0);
+  transition-duration: .3s;
+}
+#menu li {
+  display: inline-block;
+  width: 5rem;
+  height: 3rem;
+  text-align: center;
+  margin-top: 1rem;
+  margin-right: .4rem;
+}
+#menu li:first-child {
+  color: #f87a58;
+}
+#menu li i {
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background-color: #fafafc;
+  line-height: 2rem;
+  text-align: center;
+  font-size: 1.2rem;
+}
+#menu li p {
+  font-size: .8rem;
+}
+#circle-menu {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 11rem;
+  height: 11rem;
+  margin: auto;
+  border-radius: 50%;
+  box-shadow: 0 0 8rem #ccc;
+  background-color: #f3f3f5;
+  z-index: 10;
+  transform: scale(0);
+  transition-duration: .3s;
+}
+#circle-menu li {
+  position: absolute;
+  width: 2rem;
+  height: 3rem;
+  text-align: center;
+  margin: auto;
+}
+#circle-menu li.close {
+  left: 0;
+  right: 0;
+  top: .5rem;
+}
+#circle-menu li.signIn {
+  top: 0;
+  bottom: 0;
+  right: .5rem;
+  color: #f87a58;
+}
+#circle-menu li.into {
+  left: 0;
+  right: 0;
+  bottom: .5rem;
+  width: 4rem;
+}
+#circle-menu li.delete {
+  top: 0;
+  bottom: 0;
+  left: .5rem;
+}
+#circle-menu i {
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background-color: #fafafc;
+  line-height: 2rem;
+  text-align: center;
+  font-size: 1.2rem;
+}
+#circle-menu {
+  font-size: .8rem;
+}
+section {
+  width: 100%;
+  padding-top: 2.5rem;
+}
+#ckeck-info,
+#ckeck-info li {
+  width: 100%;
+  margin-top: 1rem;
+}
+#ckeck-info li {
+  position: relative;
+}
+#ckeck-info ul {
+  font-size: 0;
+}
+#ckeck-info li div {
+  display: inline-block;
+  vertical-align: middle;
+  font-size: .8rem;
+}
+#ckeck-info li .img {
+  width: 5rem;
+  height: 5rem;
+}
+#ckeck-info li .info {
+  width: calc(95%) rem;
+  height: 100%;
+  border-bottom: 1px solid #ccc;
+}
+#ckeck-info li .signIn {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: .2rem;
+  width: 2rem;
+  height: 2rem;
+  border: 0.2rem solid rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  outline: none;
+  margin: auto;
+  background-color: rgba(248, 122, 88, 0.5);
+}
+#ckeck-info li .signIn:focus {
+  border-width: .5rem;
+  transition-duration: .3s;
+}
+@keyframes clickToSignIn {
+  from {
+    border-width: .2rem;
+  }
+  to {
+    border-width: .4rem;
+  }
+}
+#ckeck-info li .info p {
+  line-height: 1.6rem;
+}
+#ckeck-info li .info i {
+  margin-right: .4rem;
+}
+#ckeck-info li .info p:not(:nth-child(1)) {
+  color: #666;
+}
+#ckeck-info li .img img {
+  width: 100%;
+  height: 100%;
+}
+#map {
+  display: none;
+  width: 100%;
+  height: 20rem;
+}
 footer {
   position: fixed;
   bottom: 0;
   width: 100%;
-  height: 2.5rem;
+  height: 3rem;
+  border-radius: 1rem 1rem 0 0;
   background-color: #f87a58;
 }
 footer ul {
@@ -97,11 +272,12 @@ footer li i {
   display: inline-block;
   box-sizing: border-box;
   height: 1.5rem;
-  padding-top: .2rem;
+  padding-top: .4rem;
 }
 footer li p {
   letter-spacing: 2px;
-  line-height: 1rem;
+  font-size: .7rem;
+  line-height: 1.5rem;
 }
 footer ul li i.iconfont {
   font-size: 1.2rem;
