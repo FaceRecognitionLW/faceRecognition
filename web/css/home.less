@@ -5,7 +5,9 @@
 @footerHeight: 3rem;
 @footerBgColor: rgb(248,122,88);
 @footerColor: rgb(246,247,247);
-@commonBg: rgb(246,247,247);
+@pageBg: rgb(246,247,247);
+@youngColor: rgb(155,202,62);
+@prompBg: rgb(243,243,245);
 
 article {
     position: relative;
@@ -59,7 +61,7 @@ header {
     line-height: @headerHeight;
     text-align: center;
     font-size: 1.2rem;
-    z-index: 10;
+    z-index: 100;
 }
 header #user,
 header #add {
@@ -221,31 +223,47 @@ section {
     padding-bottom: @footerHeight;
 }
 #ckeck-info,
-#ckeck-info li {
+#ckeck-info li:not(:nth-child(1)),
+#sign-in-history,
+#sign-in-history li:not(:nth-child(1)),
+#publish-history,
+#publish-history li:not(:nth-child(1)) {
     width: 100%;
     margin-top: 1rem;
 }
-#ckeck-info li {
+#ckeck-info li,
+#sign-in-history li,
+#publish-history li {
     position: relative;
 }
-#ckeck-info ul {
+#ckeck-info ul,
+#sign-in-history ul,
+#publish-history ul {
     font-size: 0;
 }
-#ckeck-info li div {
+#ckeck-info li div,
+#sign-in-history li div,
+#publish-history li div {
     display: inline-block;
     vertical-align: middle;
     font-size: .8rem;
 }
-#ckeck-info li .img {
+#ckeck-info li .img,
+#sign-in-history li .img,
+#publish-history li .img {
     width: 5rem;
     height: 5rem;
 }
-#ckeck-info li .info{
+#ckeck-info li .info,
+#sign-in-history li .info,
+#publish-history li .info { 
     width: calc(100% - 5)rem;
     height: 100%;
     border-bottom: 1px solid #ccc;
 }
-#ckeck-info li .signIn {
+#ckeck-info li .signIn,
+#sign-in-history li .signIn,
+#publish-history li .signInfo {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -258,7 +276,9 @@ section {
     margin: auto;
     background-color: rgba(248,122,88,.5);
 }
-#ckeck-info li .signIn:focus {
+#ckeck-info li .signIn:focus,
+#sign-in-history li .signIn:focus,
+#publish-history li .signInfo:focus {
     border-width: .5rem;
     transition-duration: .3s;
 }
@@ -269,16 +289,24 @@ section {
         border-width: .4rem;
     }
 }
-#ckeck-info li .info p {
+#ckeck-info li .info p,
+#sign-in-history li .info p,
+#publish-history li .info p {
     line-height: 1.6rem;
 }
-#ckeck-info li .info i {
+#ckeck-info li .info i,
+#sign-in-history li .info i,
+#publish-history li .info i {
     margin-right: .4rem;
 }
-#ckeck-info li .info p:not(:nth-child(1)){
+#ckeck-info li .info p:not(:nth-child(1)),
+#sign-in-history li .info p:not(:nth-child(1)),
+#publish-history li .info p:not(:nth-child(1)) {
     color: #666;
 }
-#ckeck-info li .img img {
+#ckeck-info li .img img,
+#sign-in-history li .img img,
+#publish-history li .img img {
     width: 100%;
     height: 100%;
 }
@@ -287,8 +315,48 @@ section {
     width: 100%;
     height: 20rem;
 }
+// footer
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: @footerHeight;
+    border-radius: 1rem 1rem 0 0;
+    background-color: @footerBgColor;
+    z-index: 100;
+}
+footer ul {
+    font-size: 0;
+}
+footer ul li{
+    box-sizing: border-box;
+    display: inline-block;
+    width: calc(100% / 4);
+    height: 100%;
+    color: @footerColor;
+    font-size: .5rem;
+    text-align: center;
+}
+footer ul li:first-child {
+    color: @headerColor;
+}
+footer li i {
+    display: inline-block;
+    box-sizing: border-box;
+    height: 1.5rem;
+    padding-top: .4rem;
+}
+footer li p {
+    letter-spacing: 2px;
+    font-size: .7rem;
+    line-height: 1.5rem;
+}
+footer ul li i.iconfont {
+    font-size: 1.2rem;
+}
 // 管理社群、发布签到界面
 #admin-com {
+    box-sizing: border-box;
     position: absolute;
     top: 0;
     left: 0;
@@ -296,7 +364,7 @@ section {
     height: 100%;
     padding-top: @headerHeight;
     padding-bottom: @footerHeight;
-    background-color: @commonBg;
+    background-color: @pageBg;
     transform: scale(0);
     transition-duration: .3s;
 }
@@ -360,6 +428,8 @@ section {
     font-size: 3rem;
     text-align: center;
 }
+// 发布签到信息
+#publish-sign-quick,
 #pushlish-sign {
     box-sizing: border-box;
     position: absolute;
@@ -376,13 +446,21 @@ section {
     transform: scale(0);
     transition-duration: .3s;
 }
+#publish-sign-quick {
+    height: 22rem;
+    transform: scale(0);
+}
+#publish-sign-quick p,
 #pushlish-sign p {
     color: rgb(153,153,153);
     margin: .6rem auto;
 }
+#publish-sign-quick p:last-child,
 #pushlish-sign p:last-child{
     text-align: center;
 }
+#publish-sign-quick input,
+#publish-sign-quick select,
 #pushlish-sign input {
     width: 100%;
     height: 2rem;
@@ -392,21 +470,21 @@ section {
     color: rgb(153,153,153);
     font-size: .8rem;
 }
+#publish-sign-quick input:focus,
 #pushlish-sign input:focus {
-    box-shadow: 0 0 .3rem rgb(155,202,62) inset;
+    box-shadow: 0 0 .3rem @youngColor inset;
 }
+#publish-sign-quick button,
 #pushlish-sign button {
     position: static;
-    // background-color: #fff;
-    // border: 1px solid #888;
 }
 #pushlish-sign button.submit {
     margin-right: 1rem;
-    border: 1px solid rgb(155,202,62);
-    color: rgb(155,202,62);
+    border: 1px solid @youngColor;
+    color: @youngColor;
 }
 #pushlish-sign button.submit:focus {
-    background-color: rgb(155,202,62);
+    background-color: @youngColor;
     color: #fff;
 }
 #pushlish-sign button.reset {
@@ -419,7 +497,7 @@ section {
 }
 #pushlish-sign i {
     margin-right: .4rem;
-    color: rgb(155,202,62);
+    color: @youngColor;
     font-size: 1rem;
 }
 #pushlish-sign .close {
@@ -428,42 +506,454 @@ section {
     right: .1rem;
     font-size: 1.8rem;
 }
-// footer
-footer {
-    position: fixed;
-    bottom: 0;
+#publish-sign-quick select {
+    margin-top: 2rem;
+}
+// create-com创建社群
+#create-com {
+    position: absolute;
+    top: @headerHeight;
+    left: 0;
+    right: 0;
     width: 100%;
-    height: @footerHeight;
-    border-radius: 1rem 1rem 0 0;
-    background-color: @footerBgColor;
-    z-index: 10;
+    margin: auto;
+    box-shadow: 0 2rem 4rem #aaa;
+    background-color: @pageBg;
+    transform: scale(0);
+    transition-duration: .3s;
 }
-footer ul {
-    font-size: 0;
+#create-com .headPhoto {
+    overflow: hidden;
+    width: 5rem;
+    height: 5rem;
+    margin: 1rem auto;
+    border-radius: 50%;
+    background-color: #fff;
 }
-footer ul li{
-    box-sizing: border-box;
+#create-com .headPhoto img {
+    width: 100%;
+}
+#create-com p {
+    overflow: hidden;
+    font-size: .9rem;
+    width: 18rem;
+    height: 2rem;
+    margin: 1.5rem auto;
+    border-radius: .4rem;
+}
+#create-com p i,
+#create-com p input,
+#create-com p em {
+    vertical-align: middle;
+}
+#create-com i {
     display: inline-block;
-    width: calc(100% / 4);
-    height: 100%;
-    color: @footerColor;
-    font-size: .5rem;
+    width: 5.5rem;
+    height: 2rem;
+    padding: 0 .3rem;
+    background-color: @youngColor;
+    color: #fff;
+    font-size: 1rem;
+    line-height: 2rem;
+    vertical-align: middle;
+}
+#create-com input {
+    width: 11.9rem;
+    height: 2rem;
+    outline: none;
+    border: none;
+    box-shadow: 0 0 .3rem #ccc inset;
+    background-color: #fff;
+    color: #666;
+    font-size: .8rem;
+}
+#create-com input[type="text"]:focus {
+    box-shadow: 0 0 .3rem @youngColor inset;
+}
+#create-com input[type="file"] {
+    height: 2rem;
+    line-height: 2rem;
+    box-shadow: none;
+    background-color: transparent;
+}
+#create-com p em {
+    display: inline-block;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 50%;
+    margin-left: 1rem;
+    background-color: #666;
+    color: #fff;
+    font-size: 1.6rem;
+    text-align: center;
+    line-height: 1.6rem;
+    vertical-align: middle;
+}
+#create-com p:last-child {
     text-align: center;
 }
-footer ul li:first-child {
+#create-com button {
+    width: 4rem;
+    height: 2rem;
+    outline: none;
+    border: none;
+    border-radius: 2rem;
+    background-color: #fff;
+    transition-duration: .3s;
+}
+#create-com button.reset {
+    margin-right: 1rem;
+    border: 1px solid #ccc;
+    color: #ccc;
+}
+#create-com button.reset:focus {
+    background-color: #ccc;
+    color: #fff;
+}
+#create-com button.submit {
+    border: 1px solid @youngColor;
+    color: @youngColor;
+}
+#create-com button.submit:focus {
+    background-color: @youngColor;
+    color: #fff;
+}
+// sign-in-history签到历史
+#sign-in-history,
+#publish-history {
+    position: absolute;
+    box-sizing: border-box;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: scale(0);
+    transition-duration: .3s;
+    background-color: @pageBg;  
+}
+#sign-in-history>ul,
+#publish-history>ul {
+    padding-top: @headerHeight;
+    padding-bottom: @footerHeight;
+    background-color: @pageBg;
+}
+#sign-in-history .handle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: .5rem;
+    height: 2rem;
+    margin: auto;
+    // background-color: #ccc;
+}
+#sign-in-history .handle i {
+    font-size: 1.5rem;
+}
+#sign-in-history .handle i.shanchutianchong {
+    color: #aaa;
+}
+#sign-in-history .handle i.icon-ditu-huan {
+    font-size: 1rem;
+    margin-right: 1rem;
+}
+.sign-yes {
+    color: #ccc;
+}
+.sign-not {
+    color: @youngColor;
+}
+.sign-now {
+    color: #f00;
+}
+// 弹出提示框
+#promp-box {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 80%;
+    height: 10rem;
+    margin: auto;
+    box-shadow: 0 0 6rem #ccc;
+    border-radius: 1rem;
+    background-color: @prompBg;
+    line-height: 10rem;
+    text-align: center;
+    transform: scale(0);
+}
+
+// publish-history
+#publish-history {
+    // transform: scale(1);
+}
+#publish-history .handle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 1rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin: auto;
+}
+#publish-history .handle i {
+    font-size: 1.5rem;
+    color: #aaa ;
+}
+#publish-history li em {
+    margin-left: 1rem;
+    text-decoration: underline;
+    color: #aaa;
+}
+// 签到信息
+#ckeck-sign-status {
+    box-sizing: border-box;
+    position: absolute;
+    top: 1rem;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 28rem;    
+    padding-top: @headerHeight;
+    margin: auto;
+    background-color: #fff;
+    transform: scale(1);
+    font-size: 0;
+    transform: scale(0);
+    transition-duration: .3s;
+}
+#ckeck-sign-status>div {
+    overflow: auto;
+    box-sizing: border-box;
+    display: inline-block;
+    width: 50%;
+    height: 100%;
+    border-radius: 1rem;
+    box-shadow: 0 0 5rem #ccc;
+    background-color: #fff;
+    font-size: .8rem;
+    color: #666;
+    vertical-align: top;
+}
+#ckeck-sign-status>div h3 {
+    padding: .5rem 0; 
+    text-align: center;
+    color: #fff;
+}
+#ckeck-sign-status .yes h3{
+    background-color: @youngColor;
+}
+#ckeck-sign-status .no h3{
+    background-color: @footerBgColor;
+}
+#ckeck-sign-status>div p {
+    overflow: hidden;
+    width: 100%;
+    height: 2rem;
+    border-bottom: 1px solid #ccc;
+    line-height: 2rem;
+}
+#ckeck-sign-status>div p img {
+    width: 2rem;
+}
+#ckeck-sign-status>div p img,
+#ckeck-sign-status>div p span {
+    vertical-align: middle;
+}
+#ckeck-sign-status i.close {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 2rem;
+    height: 2rem;
+    border: 5px solid rgba(255,255,255,.7);
+    border-radius: 50%;
+    margin: auto;
+    background-color: rgba(248,122,88,.6);
+    color: #fff;
+    text-align: center;
+    line-height: 2rem;
+    font-size: 1rem;
+}
+// 社群详细信息
+#com-detail {
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding-top: @headerHeight;
+    padding-bottom: @footerHeight;
+    background-color: @pageBg;
+    transform: scale(0);
+    transition-duration: .3s;
+}
+#com-detail .header {
+    position: relative;
+    width: 100%;
+    height: 5rem;
+    background: #fff url('../images/comBg3.png') no-repeat;
+    background-size: cover;
     color: @headerColor;
 }
-footer li i {
+#com-detail .header>div {
     display: inline-block;
+    vertical-align: middle;
+}
+#com-detail .header .img {
+    overflow: hidden;
+    width: 4rem;
+    height: 4rem;
+    margin: .5rem;
+    border-radius: 50%;
+    background-color: @pageBg;
+}
+#com-detail .header .img img {
+    width: 100%;
+    height: 100%;
+}
+#com-detail .header .info h3 {
+    font-size: 1rem;
+}
+#com-detail .header .info p{
+    font-size: .8rem;
+    line-height: 1.6rem;
+    color: #999;
+}
+#com-detail .header i#look {
+    position :absolute;
+    top: 0;
+    bottom: 0;
+    right: .5rem;
+    width: 2rem;
+    height: 2rem;
+    margin: auto;
+    font-size: 1.8rem;
+    color: #aaa;
+}
+#com-detail .bottom {
+    position: relative;
+    width: 100%;
+}
+#com-detail .bottom>div {
     box-sizing: border-box;
-    height: 1.5rem;
-    padding-top: .4rem;
+    position: absolute;
+    overflow: auto;
+    width: 100%;
+    height: 28rem;
+    padding-bottom: 2rem;
+    background-color: @pageBg;
+    color: #888;
+    font-size: .8rem;
 }
-footer li p {
-    letter-spacing: 2px;
-    font-size: .7rem;
-    line-height: 1.5rem;
+#com-detail h3 {
+    height: 1.2rem;
+    padding: .5rem 0;
+    text-align: center;
+    border-bottom: 1px dashed #ccc;
+    color: #666;
 }
-footer ul li i.iconfont {
-    font-size: 1.2rem;
+#com-detail .bottom .members {
+    right: 100%;
+    top: 0;
+    transition-duration: .3s;
+}
+#com-detail .posting {
+    position: relative;
+}
+#com-detail .posting h3 span{
+    width: 5rem;
+    height: .8rem;
+    display: inline-block;
+    line-height: .8rem;
+}
+#com-detail .posting h3 span:first-child {
+    border-right: 3px solid #ccc;
+}
+#com-detail  .content li{
+    width: 100%;
+    margin-top: 1rem;
+}
+#com-detail  .content li>div {
+    display: inline-block;
+    vertical-align: middle;
+}
+#com-detail  .content li .img {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background-color: #fff;
+}
+#com-detail  .content li .img img {
+    width: 100%;
+}
+#com-detail  .content li .word {
+    position: relative;
+    max-width: 15rem;
+    margin-left: 1rem;
+    padding: .4rem; 
+    border-radius: .4rem;
+    background-color: #fff;
+    color: #888;
+    line-height: 1.4rem;
+}
+#com-detail  .content li .word:before {
+    position: absolute;
+    top: .6rem;
+    left: -1rem;
+    content: '';
+    border: .5rem solid #fff;
+    border-top-color: transparent;
+    border-bottom-color: transparent;
+    border-left-color: transparent;
+}
+#com-detail  .content .edit {
+    width: 100%;
+    padding-left: 3rem;
+    margin: .5rem 0;
+}
+#com-detail  .content .edit span {
+    margin-right: 4rem;
+    text-decoration: underline;
+    color: #aaa;
+    font-size: .6rem;
+}
+// 留言框
+#post-word {
+    position: absolute;
+    top: 1rem;
+    left: 0;
+    right: 0;
+    width: 16rem;
+    height: 10rem;
+    margin: auto;
+    box-shadow: 0 0 10rem #ccc;
+    background-color: rgb(251,251,251);
+    transform: scale(0);
+    transition-duration: .3s;
+}
+#post-word textarea {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    height: 6rem;
+    padding: .4rem;
+    margin: auto;
+    border: none;
+    resize: none;
+    color: #666;
+}
+#post-word p {
+    text-align: center;
+    margin: 1rem;
+}
+#post-word p button {
+    vertical-align: middle;
+}
+// 社群成员
+#post-word .members h3{
+    background-color: #ccc;
+    text-align: center; 
 }

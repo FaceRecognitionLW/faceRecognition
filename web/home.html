@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="./css/commonCss/reset.css">
+    <link rel="stylesheet" href="./css/commonCss/style.css">
     <link rel="stylesheet" href="./css/commonCss/iconfont.css">
     <link rel="stylesheet" href="./css/home.css">
     <title>刷脸签到-首页</title>
@@ -33,7 +34,8 @@
                     <i class="iconfont icon-tianjia"></i>
                     <p>添加社群</p>
                 </li>
-                <li class="sign-history">
+                <li class="sign-in-his
+                tory">
                     <i class="iconfont icon-get"></i>
                     <p>签到历史</p>
                 </li>
@@ -132,7 +134,8 @@
                     <i class="iconfont icon-ditu-tuding"></i>
                     <p>签到</p>
                 </li>
-                <li class="sign-history">
+                <li class="sign-in-his
+                tory">
                     <i class="iconfont icon-get"></i>
                     <p>签到历史</p>
                 </li>
@@ -146,6 +149,7 @@
                 </li>
             </ul>
         </footer>
+        <!-- 管理社群 -->
         <div id="admin-com">
             <ul>
                 <li>
@@ -199,9 +203,281 @@
                 <p><button class="reset">取消</button><button class="submit">提交</button></p>
             </div>
         </div>
-        <div id="add-com">
-            
+        <!-- 创建社群 -->
+        <div id="create-com">
+            <div class="headPhoto">
+                <img src="./images/headerImg.png" alt="">
+            </div>
+            <p><i class="iconfont icon-wenjianjia"> 上传头像</i><input type="file" name="headPhoto"></p>
+            <p><i class="iconfont icon-zihangche"> 社群名</i><input type="text" name="comName"></p>
+            <p><i class="iconfont icon-icon_yiwenkongxin"> 设置问题</i><em>+</em></p>
+            <p><button class="reset">取消</button><button class="submit">提交</button></p>
         </div>
+        <!-- 发布签到的的快捷方式 -->
+        <div id="publish-sign-quick">
+            <select name="publish-sign-quick" id="">
+                <option value="社群1">社群1</option>
+                <option value="社群2">社群2</option>
+                <option value="社群3">社群3</option>
+            </select>
+            <i class="iconfont icon-guanbi close"></i>
+            <p><i class="iconfont icon-ditu-dibiao"></i>地点</p>
+            <input type="text" name="addr">
+            <p><i class="iconfont icon-ditu-huan"></i>时间</p>
+            <input type="datetime-local" name="time">
+            <p><i class="iconfont icon-fabusekuai"></i>范围</p>
+            <input type="range" name="range" min="0" step="1" value="10">
+            <p><button class="reset">取消</button><button class="submit">提交</button></p>
+        </div>
+        <!-- 签到历史 -->
+        <div id="sign-in-history">
+            <ul>
+                <li>
+                    <div class="img">
+                        <img src="./images/com/1.png" alt="img">
+                    </div>
+                    <div class="info">
+                        <p>数媒1501班</p>
+                        <p><i class="iconfont icon-ditu-dibiao"></i><span>信息院</span></p>
+                        <p><i class="iconfont icon-icon_zhanghao"></i><span>哈哈哈</span></p>
+                        <p><i class="iconfont icon-tixingshixin"></i><time class="start">2018-12-13 11:00</time>~<time class="end">12:00</time></p>
+                        <p><i class="iconfont icon-xiaoxitongzhi"></i><span>签到失败</span></p>
+                    </div>
+                    <div class="handle">
+                        <i class="iconfont icon-ditu-huan sign-now"></i>
+                        <i class="iconfont icon-shanchutianchong"></i>
+                    </div>
+                </li>
+                <li>
+                    <div class="img">
+                        <img src="./images/com/1.png" alt="img">
+                    </div>
+                    <div class="info">
+                        <p>数媒1501班</p>
+                        <p><i class="iconfont icon-ditu-dibiao"></i><span>信息院</span></p>
+                        <p><i class="iconfont icon-icon_zhanghao"></i><span>哈哈哈</span></p>
+                        <p><i class="iconfont icon-tixingshixin"></i><time class="start">2018-12-13 11:00</time>~<time class="end">12:00</time></p>
+                        <p><i class="iconfont icon-xiaoxitongzhi"></i><span>签到进行中</span></p>
+                    </div>
+                    <div class="handle">
+                        <i class="iconfont icon-ditu-huan sign-not"></i>
+                        <i class="iconfont icon-shanchutianchong"></i>
+                    </div>
+                </li>
+                <li>
+                    <div class="img">
+                        <img src="./images/com/1.png" alt="img">
+                    </div>
+                    <div class="info">
+                        <p>数媒1501班</p>
+                        <p><i class="iconfont icon-ditu-dibiao"></i><span>信息院</span></p>
+                        <p><i class="iconfont icon-icon_zhanghao"></i><span>哈哈哈</span></p>
+                        <p><i class="iconfont icon-tixingshixin"></i><time class="start">2018-12-13 11:00</time>~<time class="end">12:00</time></p>
+                        <p><i class="iconfont icon-xiaoxitongzhi"></i><span>已签</span></p>
+                    </div>
+                    <div class="handle">
+                        <i class="iconfont icon-ditu-huan sign-yes"></i>
+                        <i class="iconfont icon-shanchutianchong"></i>
+                    </div>
+                </li>
+                <li>
+                    <div class="img">
+                        <img src="./images/com/1.png" alt="img">
+                    </div>
+                    <div class="info">
+                        <p>数媒1501班</p>
+                        <p><i class="iconfont icon-ditu-dibiao"></i><span>信息院</span></p>
+                        <p><i class="iconfont icon-icon_zhanghao"></i><span>哈哈哈</span></p>
+                        <p><i class="iconfont icon-tixingshixin"></i><time class="start">2018-12-13 11:00</time>~<time class="end">12:00</time></p>
+                        <p><i class="iconfont icon-xiaoxitongzhi"></i><span>已签</span></p>
+                    </div>
+                    <div class="handle">
+                        <i class="iconfont icon-ditu-huan sign-yes"></i>
+                        <i class="iconfont icon-shanchutianchong"></i>
+                    </div>
+                </li>
+            </ul>
+            <div id="promp-box">
+                <button class="cancel-btn">取消</button>
+                <button class="sure-btn">确定</button>
+            </div>
+        </div>
+        <!-- 发布历史 -->
+        <div id="publish-history">
+            <ul>
+                <li>
+                    <div class="img">
+                        <img src="./images/com/1.png" alt="img">
+                    </div>
+                    <div class="info">
+                        <p>数媒1501班</p>
+                        <p><i class="iconfont icon-ditu-dibiao"></i><span>信息院</span></p>
+                        <p><i class="iconfont icon-icon_zhanghao"></i><span>哈哈哈</span></p>
+                        <p><i class="iconfont icon-tixingshixin"></i><time class="start">2018-12-13 11:00</time>~<time class="end">12:00</time></p>
+                        <p><i class="iconfont icon-shirenrenzheng"></i><span>20/30</span><em>查看</em></p>
+                    </div>
+                    <div class="handle">
+                        <i class="iconfont icon-shanchutianchong"></i>
+                    </div>
+                </li>
+                <li>
+                    <div class="img">
+                        <img src="./images/com/1.png" alt="img">
+                    </div>
+                    <div class="info">
+                        <p>数媒1501班</p>
+                        <p><i class="iconfont icon-ditu-dibiao"></i><span>信息院</span></p>
+                        <p><i class="iconfont icon-icon_zhanghao"></i><span>哈哈哈</span></p>
+                        <p><i class="iconfont icon-tixingshixin"></i><time class="start">2018-12-13 11:00</time>~<time class="end">12:00</time></p>
+                        <p><i class="iconfont icon-shirenrenzheng"></i><span>20/30</span><em>查看</em></p>
+                    </div>
+                    <div class="handle">
+                        <i class="iconfont icon-shanchutianchong"></i>
+                    </div>
+                </li>
+                <li>
+                    <div class="img">
+                        <img src="./images/com/1.png" alt="img">
+                    </div>
+                    <div class="info">
+                        <p>数媒1501班</p>
+                        <p><i class="iconfont icon-ditu-dibiao"></i><span>信息院</span></p>
+                        <p><i class="iconfont icon-icon_zhanghao"></i><span>哈哈哈</span></p>
+                        <p><i class="iconfont icon-tixingshixin"></i><time class="start">2018-12-13 11:00</time>~<time class="end">12:00</time></p>
+                        <p><i class="iconfont icon-shirenrenzheng"></i><span>20/30</span><em>查看</em></p>
+                    </div>
+                    <div class="handle">
+                        <i class="iconfont icon-shanchutianchong"></i>
+                    </div>
+                </li>
+                <li>
+                    <div class="img">
+                        <img src="./images/com/1.png" alt="img">
+                    </div>
+                    <div class="info">
+                        <p>数媒1501班</p>
+                        <p><i class="iconfont icon-ditu-dibiao"></i><span>信息院</span></p>
+                        <p><i class="iconfont icon-icon_zhanghao"></i><span>哈哈哈</span></p>
+                        <p><i class="iconfont icon-tixingshixin"></i><time class="start">2018-12-13 11:00</time>~<time class="end">12:00</time></p>
+                        <p><i class="iconfont icon-shirenrenzheng"></i><span>20/30</span><em>查看</em></p>
+                    </div>
+                    <div class="handle">
+                        <i class="iconfont icon-shanchutianchong"></i>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <!-- 签到情况 -->
+        <div id="ckeck-sign-status">
+            <div class="yes">
+                <h3>已签(人): <span>10</span></h3>
+                <p>
+                    <img src="./images/headPhoto.png" alt="img">
+                    <span>名字1</span>
+                </p>
+                <p>
+                    <img src="./images/headPhoto.png" alt="img">
+                    <span>名字1</span>
+                </p>
+                <p>
+                    <img src="./images/headPhoto.png" alt="img">
+                    <span>名字1</span>
+                </p>
+                <p>
+                    <img src="./images/headPhoto.png" alt="img">
+                    <span>名字1</span>
+                </p>
+                <p>
+                    <img src="./images/headPhoto.png" alt="img">
+                    <span>名字1</span>
+                </p>
+            </div>
+            <div class="no">
+                <h3>未签(人)： <span>3</span></h3>
+                <p>
+                    <img src="./images/headPhoto.png" alt="img">
+                    <span>名字1</span>
+                </p>
+                <p>
+                    <img src="./images/headPhoto.png" alt="img">
+                    <span>名字1</span>
+                </p>
+                <p>
+                    <img src="./images/headPhoto.png" alt="img">
+                    <span>名字1</span>
+                </p>
+            </div>
+            <i class="iconfont icon-guanbi1 close"></i>
+        </div>
+        <!-- 社群详情 -->
+        <div id="com-detail">
+            <div class="header">
+                <div class="img">
+                    <img src="" alt="">
+                </div>
+                <div class="info">
+                    <h3>数媒1501班</h3>
+                    <p>创建人: <span>哈哈哈</span></p>
+                </div>
+                <i class="iconfont icon-qun" id="look"></i>
+            </div>
+            <div class="bottom">
+                <div class="posting">
+                    <h3><span>发帖</span><span>发匿名帖</span></h3>
+                    <div class="content">
+                        <ul>
+                            <li>
+                                <div class="img">
+                                    <img src="./images/com/6.png" alt="img">
+                                </div>
+                                <div class="word">
+                                    哈哈哈
+                                </div>
+                                <p class="edit"><span class="reply">回复</span><span class="look-reply">查看所有回复</span><i class="iconfont icon-shanchutianchong"></i></p>
+                            </li>
+                            <li>
+                                <div class="img">
+                                    <img src="./images/com/1.png" alt="img">
+                                </div>
+                                <div class="word">
+                                    哈哈哈思考的基础呢可是电脑卡但是你参考速度开超市看到
+                                </div>
+                                <p class="edit"><span>查看所有回复</span><span>回复</span><i class="iconfont icon-shanchutianchong"></i></p>
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="post-word">
+                        <textarea name="word" id="" cols="25" rows="5" placeholder="say something"></textarea>
+                        <p><button class="reset">取消</button><button class="submit">提交</button></p>
+                    </div> 
+                </div>
+                <div class="members">
+                    <h3>成员(<span>100</span>)人</h3>
+                    <ul>
+                        <li>
+                            <i class="iconfont icon-taiyang"></i>
+                            <span>名字1</span>
+                        </li>
+                        <li>
+                            <i class="iconfont icon-taiyang"></i>
+                            <span>名字1</span>
+                        </li>
+                        <li>
+                            <i class="iconfont icon-taiyang"></i>
+                            <span>名字1</span>
+                        </li>
+                        <li>
+                            <i class="iconfont icon-taiyang"></i>
+                            <span>名字1</span>
+                        </li>
+                    </ul>
+                </div>
+                
+            </div>
+        </div>
+        <!-- 更改个人信息 -->
+        <!-- 正式签到 -->
+        <!-- 开场动画 -->
         <div id="stage">
             <div id="loading">
                 <img src="./images/loading.png" alt="loading">

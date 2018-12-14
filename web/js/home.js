@@ -19,6 +19,8 @@
         this.handleFooterClick();
         // admin-com事件委托
         this.handleAdminCom();
+        // 控制社群详情事件委托
+        this.handleComDetail();
     }
     Object.defineProperty(Home.prototype,'constructor',{
         enumerable: false,
@@ -123,12 +125,48 @@
             }
         },
         handleMenuClick: function() {
-            var oMenu = doc.getElementById('menu');
+            var oMenu = doc.getElementById('menu')
+                // 快捷发布签到信息
+                oPublishSignQuick= doc.getElementById('publish-sign-quick'),
+                // 创建社群
+                oCreateCom = doc.getElementById('create-com'),
+                // 签到历史
+                oSignInHistory = doc.getElementById('sign-in-history'),
+                // 发布历史
+                oPublishHistory = doc.getElementById('publish-history'),
+                // 管理社群
+                oAdminCom = doc.getElementById('admin-com');
+            console.log(oPublishHistory);
             oMenu.ontouchstart = function(e){
                 e = e||window.e;
                 var target = e.target||e.srcElement;
                 console.log(target);
                 switch(target.className) {
+                    // 发布签到
+                    case 'iconfont icon-dingwei':
+                        oPublishSignQuick.style.transform = 'scale(1)';
+                        this.style.transform = 'scale(0)';
+                        break;
+                    // 创建社群信息
+                    case 'iconfont icon-tianjia':
+                        oCreateCom.style.transform = 'scale(1)';
+                        this.style.transform = 'scale(0)';
+                        break;
+                    // 签到历史
+                    case 'iconfont icon-get':
+                        oSignInHistory.style.transform = 'scale(1)';
+                        this.style.transform = 'scale(0)';
+                        break;
+                    // 发布历史
+                    case 'iconfont icon-fabusekuai':
+                        oPublishHistory.style.transform = 'scale(1)';
+                        this.style.transform = 'scale(0)';
+                        break;
+                    // 管理社群
+                    case 'iconfont icon-zuzhiqunzu':
+                        oAdminCom.style.transform = 'scale(1)';
+                        this.style.transform = 'scale(0)';
+                        break;
                     case 'iconfont icon-guanbi':
                         console.log('关闭');
                         oMenu.style.transform = "scale(0)";
@@ -164,16 +202,31 @@
         },
         handleFooterClick: function(){
             var oFooter = doc.querySelector('footer'),
-                oAminCom = doc.getElementById('admin-com');
+                // 签到历史
+                oSignInHistory = doc.getElementById('sign-in-history'),
+                // 发布历史
+                oPublishHistory = doc.getElementById('publish-history'),
+                // 管理社群
+                oAdminCom = doc.getElementById('admin-com');
             oFooter.ontouchstart = function(e){
                 e = e||window.e;
                 var target = e.target||e.srcElement;
                 console.log(target);
                 switch(target.className) {
-                    case 'signIn':
+                    // 签到
+                    case 'iconfont icon-ditu-tuding':
                         break;
-                    case 'menage':
-                        oAminCom.style.transform = 'scale(1)';
+                    // 签到历史
+                    case 'iconfont icon-get':
+                        oSignInHistory.style.transform = 'scale(1)';
+                        break;
+                    // 发布历史
+                    case 'iconfont icon-icon_fabu':
+                        oPublishHistory.style.transform = 'scale(1)';
+                        break;
+                    // 管理社群
+                    case 'iconfont icon-zuzhiqunzu':
+                        oAdminCom.style.transform = 'scale(1)';
                         break;
                 }
             }
@@ -198,6 +251,46 @@
                         break;
                     case 'reset':
                         oPublishSign.style.transform = 'scale(0)';
+                        break;
+                    case 'submit':
+                        break;
+                }
+            }
+        },
+        handleComDetail: function(){
+            var oComDetailBox = doc.getElementById('com-detail'),
+                oAllMemBtn = doc.getElementById('look'),    
+                oAllMemCon = doc.querySelector('#com-detail .bottom .members'),
+                oPostingEdit = doc.querySelector('#com-detail .posting .content'),
+                oReplyBox = doc.getElementById('post-word');
+            // oComDetailBox.ontouchstart = function(e){
+            //     e = e||window.e;
+            //     var target = e.target||e.srcElement;
+            //     e.stopPropagation();
+            //     oAllMemCon.style.transform = "translateX(0)";
+            // }
+            oAllMemBtn.ontouchstart = function(){
+                oAllMemCon.style.transform = "translateX(100%)";
+            };
+            oPostingEdit.ontouchstart = function(e){
+                e = e||window.e;
+                var target = e.target||e.srcElement;
+                switch(target.className) {
+                    case 'reply':
+                        oReplyBox.style.transform = 'scale(1)';
+                        break;
+                    case 'look-reply':
+                        break;
+                    case 'iconfont icon-shanchutianchong':
+                        break;
+                }
+            };
+            oReplyBox.ontouchstart = function(e){
+                e = e||window.e;
+                var target = e.target||e.srcElement;
+                switch(target.className){
+                    case 'reset':
+                        oReplyBox.style.transform = 'scale(0)';
                         break;
                     case 'submit':
                         break;
