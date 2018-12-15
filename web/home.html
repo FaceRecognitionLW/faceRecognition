@@ -32,7 +32,7 @@
                 </li>
                 <li class="add-com">
                     <i class="iconfont icon-tianjia"></i>
-                    <p>添加社群</p>
+                    <p>创建社群</p>
                 </li>
                 <li class="sign-in-his
                 tory">
@@ -134,8 +134,7 @@
                     <i class="iconfont icon-ditu-tuding"></i>
                     <p>签到</p>
                 </li>
-                <li class="sign-in-his
-                tory">
+                <li class="sign-in-history">
                     <i class="iconfont icon-get"></i>
                     <p>签到历史</p>
                 </li>
@@ -196,10 +195,12 @@
                 <i class="iconfont icon-guanbi close"></i>
                 <p><i class="iconfont icon-ditu-dibiao"></i>地点</p>
                 <input type="text" name="addr">
-                <p><i class="iconfont icon-ditu-huan"></i>时间</p>
-                <input type="datetime-local" name="time">
-                <p><i class="iconfont icon-fabusekuai"></i>范围</p>
-                <input type="range" name="range" min="0" step="1" value="10">
+                <p><i class="iconfont icon-ditu-huan"></i>开始时间</p>
+                <input type="datetime-local" name="startTime">
+                <p><i class="iconfont icon-ditu-huan"></i>结束时间</p>
+                <input type="datetime-local" name="endTime">
+                <p><i class="iconfont icon-fabusekuai"></i>范围 : <span class="range-show">0</span></p>
+                <input type="range" name="range" min="0" max="1000" step="1" value="10">
                 <p><button class="reset">取消</button><button class="submit">提交</button></p>
             </div>
         </div>
@@ -223,11 +224,13 @@
             <i class="iconfont icon-guanbi close"></i>
             <p><i class="iconfont icon-ditu-dibiao"></i>地点</p>
             <input type="text" name="addr">
-            <p><i class="iconfont icon-ditu-huan"></i>时间</p>
-            <input type="datetime-local" name="time">
-            <p><i class="iconfont icon-fabusekuai"></i>范围</p>
-            <input type="range" name="range" min="0" step="1" value="10">
-            <p><button class="reset">取消</button><button class="submit">提交</button></p>
+            <p><i class="iconfont icon-ditu-huan"></i>开始时间</p>
+            <input type="datetime-local" name="startTime">
+            <p><i class="iconfont icon-ditu-huan"></i>结束时间</p>
+            <input type="datetime-local" name="endTime">
+            <p><i class="iconfont icon-fabusekuai"></i>范围 : <span class="range-show">0</span></p>
+            <input type="range" name="range" min="0" max="1000" step="1" value="10">
+            <p><button class="reset" type="reset">取消</button><button class="submit">提交</button></p>
         </div>
         <!-- 签到历史 -->
         <div id="sign-in-history">
@@ -475,7 +478,23 @@
                 
             </div>
         </div>
-        <!-- 更改个人信息 -->
+        <!-- 搜索社群 -->
+        <div id="search-com">
+            <ul>
+                <li>
+                    <div class="img">
+                        <img src="./images/com/1.png" alt="img">
+                    </div>
+                    <div class="info">
+                        <p>数媒1501班</p>
+                        <p><i class="iconfont icon-ditu-dibiao"></i><span>信息院</span></p>
+                        <p><i class="iconfont icon-icon_zhanghao"></i><span>哈哈哈</span></p>
+                        <p><i class="iconfont icon-ditu-huan"></i><time class="start">2018-12-13 11:00</time></p>
+                    </div>
+                    <i class="join">+</i>
+                </li>
+            </ul>
+        </div>
         <!-- 正式签到 -->
         <!-- 开场动画 -->
         <div id="stage">

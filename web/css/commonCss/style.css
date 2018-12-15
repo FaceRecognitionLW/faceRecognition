@@ -6,8 +6,10 @@ button.reset {
     outline: none;
     border: 1px solid #ccc;
     border-radius: 2rem;
+    background-color: transparent;
     color: #ccc;
     margin-right: 1rem;
+    transition-duration: .3s;
 }
 button.reset:focus {
     background-color: #ccc;
@@ -19,7 +21,9 @@ button.submit {
     outline: none;
     border: 1px solid rgb(155,202,62);
     border-radius: 2rem;
+    background-color: transparent;
     color: rgb(155,202,62);
+    transition-duration: .3s;
 }
 button.submit:focus {
     background-color: rgb(155,202,62);
@@ -53,4 +57,9 @@ button.submit:focus {
 .cancel-btn:focus {
     background-color: #ccc;
     color: #fff;
+}
+/* 菜单高亮 */
+.menuHighLight {
+    background-color: rgb(248,122,88) !important;
+    color: #fff !important;
 }

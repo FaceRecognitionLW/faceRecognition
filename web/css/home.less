@@ -91,9 +91,12 @@ header #search input {
     border: none;
     border-radius: .2rem;
     background-color: rgb(246,247,247);
-    color: @headerColor;
-    font-size: .6rem;
+    color: #666;
+    font-size: .8rem;
     letter-spacing: .05rem;
+}
+header #search input:focus {
+    box-shadow: 0 0 .4rem @footerBgColor;
 }
 header #search i {
     font-size: 1.4rem;
@@ -138,17 +141,13 @@ header #add {
     margin-top: 1rem;
     margin-right: .4rem;
 }
-#menu li:first-child i {
-    // color: @footerBgColor;
-    color: #fff;
-    background-color: @footerBgColor;
-}
 #menu li i {
     display: inline-block;
     width: 2rem;
     height: 2rem;
     border-radius: 50%;
     background-color: rgb(250,250,252);
+    color: @footerBgColor;
     line-height: 2rem;
     text-align: center;
     font-size: 1.2rem;
@@ -227,43 +226,52 @@ section {
 #sign-in-history,
 #sign-in-history li:not(:nth-child(1)),
 #publish-history,
-#publish-history li:not(:nth-child(1)) {
+#publish-history li:not(:nth-child(1)), 
+#search-com,
+#search-com li:not(:nth-child(1)){
+    
     width: 100%;
     margin-top: 1rem;
 }
 #ckeck-info li,
 #sign-in-history li,
-#publish-history li {
+#publish-history li, 
+#search-com li{
     position: relative;
 }
 #ckeck-info ul,
 #sign-in-history ul,
-#publish-history ul {
+#publish-history ul,
+#search-com ul {
     font-size: 0;
 }
 #ckeck-info li div,
 #sign-in-history li div,
-#publish-history li div {
+#publish-history li div,
+#search-com li div {
     display: inline-block;
     vertical-align: middle;
     font-size: .8rem;
 }
 #ckeck-info li .img,
 #sign-in-history li .img,
-#publish-history li .img {
+#publish-history li .img,
+#search-com li .img {
     width: 5rem;
     height: 5rem;
 }
 #ckeck-info li .info,
 #sign-in-history li .info,
-#publish-history li .info { 
+#publish-history li .info,
+#search-com li .info { 
     width: calc(100% - 5)rem;
     height: 100%;
     border-bottom: 1px solid #ccc;
 }
 #ckeck-info li .signIn,
 #sign-in-history li .signIn,
-#publish-history li .signInfo {
+#publish-history li .signInfo,
+#search-com li .signInfo {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -278,7 +286,8 @@ section {
 }
 #ckeck-info li .signIn:focus,
 #sign-in-history li .signIn:focus,
-#publish-history li .signInfo:focus {
+#publish-history li .signInfo:focus,
+#search-com li .signInfo:focus {
     border-width: .5rem;
     transition-duration: .3s;
 }
@@ -291,22 +300,26 @@ section {
 }
 #ckeck-info li .info p,
 #sign-in-history li .info p,
-#publish-history li .info p {
+#publish-history li .info p,
+#search-com li .info p {
     line-height: 1.6rem;
 }
 #ckeck-info li .info i,
 #sign-in-history li .info i,
-#publish-history li .info i {
+#publish-history li .info i,
+#search-com li .info i {
     margin-right: .4rem;
 }
 #ckeck-info li .info p:not(:nth-child(1)),
 #sign-in-history li .info p:not(:nth-child(1)),
-#publish-history li .info p:not(:nth-child(1)) {
+#publish-history li .info p:not(:nth-child(1)),
+#search-com li .info p:not(:nth-child(1)) {
     color: #666;
 }
 #ckeck-info li .img img,
 #sign-in-history li .img img,
-#publish-history li .img img {
+#publish-history li .img img,
+#search-com li .img img {
     width: 100%;
     height: 100%;
 }
@@ -401,7 +414,7 @@ footer ul li i.iconfont {
 #admin-com li .info a:active {
     color: @footerBgColor;  
 }
-#admin-com button {
+#admin-com li button {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -416,7 +429,7 @@ footer ul li i.iconfont {
     color: #aaa;
     transition-duration: .3s;
 }
-#admin-com button:focus {
+#admin-com li button:focus {
     background-color: @footerBgColor;
     color: @footerColor;
 }
@@ -433,11 +446,10 @@ footer ul li i.iconfont {
 #pushlish-sign {
     box-sizing: border-box;
     position: absolute;
-    top: 4rem;
+    top: 2.4rem;
     left: 0;
     right: 0;
     width: 90%;
-    height: 19rem;
     padding: .4rem 1rem;
     margin: auto;
     border-radius: .6rem;
@@ -445,10 +457,6 @@ footer ul li i.iconfont {
     background-color: rgb(235,235,235);
     transform: scale(0);
     transition-duration: .3s;
-}
-#publish-sign-quick {
-    height: 22rem;
-    transform: scale(0);
 }
 #publish-sign-quick p,
 #pushlish-sign p {
@@ -478,28 +486,13 @@ footer ul li i.iconfont {
 #pushlish-sign button {
     position: static;
 }
-#pushlish-sign button.submit {
-    margin-right: 1rem;
-    border: 1px solid @youngColor;
-    color: @youngColor;
-}
-#pushlish-sign button.submit:focus {
-    background-color: @youngColor;
-    color: #fff;
-}
-#pushlish-sign button.reset {
-    border: 1px solid #ccc;
-    margin-right: 1rem;
-}
-#pushlish-sign button.reset:focus {
-    background-color: #ccc;
-    color: #fff;
-}
+#publish-sign-quick i,
 #pushlish-sign i {
     margin-right: .4rem;
     color: @youngColor;
     font-size: 1rem;
 }
+#publish-sign-quick .close,
 #pushlish-sign .close {
     position: absolute;
     top: .1rem;
@@ -649,7 +642,7 @@ footer ul li i.iconfont {
 #sign-in-history .handle i {
     font-size: 1.5rem;
 }
-#sign-in-history .handle i.shanchutianchong {
+#sign-in-history .handle i.icon-shanchutianchong {
     color: #aaa;
 }
 #sign-in-history .handle i.icon-ditu-huan {
@@ -684,9 +677,6 @@ footer ul li i.iconfont {
 }
 
 // publish-history
-#publish-history {
-    // transform: scale(1);
-}
 #publish-history .handle {
     position: absolute;
     top: 0;
@@ -705,6 +695,7 @@ footer ul li i.iconfont {
     text-decoration: underline;
     color: #aaa;
 }
+
 // 签到信息
 #ckeck-sign-status {
     box-sizing: border-box;
@@ -777,7 +768,8 @@ footer ul li i.iconfont {
     font-size: 1rem;
 }
 // 社群详细信息
-#com-detail {
+#com-detail,
+#search-com {
     box-sizing: border-box;
     position: absolute;
     top: 0;
@@ -856,9 +848,14 @@ footer ul li i.iconfont {
     color: #666;
 }
 #com-detail .bottom .members {
-    right: 100%;
-    top: 0;
+    overflow: auto;
+    right: 0;
+    top: 2.2rem;
+    width: 6rem;
+    height: 22.5rem;
+    background-color: #fff;
     transition-duration: .3s;
+    opacity: 0;
 }
 #com-detail .posting {
     position: relative;
@@ -957,3 +954,23 @@ footer ul li i.iconfont {
     background-color: #ccc;
     text-align: center; 
 }
+// 搜索社群
+#search-com {
+    transform: scale(0);
+}
+#search-com .join {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: .5rem;
+    width: 2rem;
+    height: 2rem;
+    margin: auto;
+    border-radius: 50%;
+    background-color: @youngColor;
+    color: #fff;
+    font-size: 1.8rem;
+    text-align: center;
+    line-height: 2rem;
+}
+
