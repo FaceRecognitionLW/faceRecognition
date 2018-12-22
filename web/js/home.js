@@ -35,7 +35,9 @@
         init: function(){
             var oOpenAnimation = doc.getElementById('stage');
             var timer = setTimeout(function(){  
-                oOpenAnimation.style.display = "none";
+                // oOpenAnimation.style.display = "none";
+                // 如果用户没有登录则跳转到登陆界面，否则直接打开主界面
+                window.location.href = 'login.html';
                 clearTimeout(timer);
             },2000)
         },

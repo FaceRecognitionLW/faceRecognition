@@ -34,6 +34,9 @@ const DELETEUSER = require('./serverModule/deleteUser.js');
 const GETGROUPLIST = require('./serverModule/getAllGroupList.js');
 // 身份验证
 const IDCHECK = require('./serverModule/idCheck.js');
+// onlineVivoDetection活体检测
+const ONLINEVIVODETECT = require('./serverModule/onlineVivoDetection.js');
+
 
 // 关于client
 const AipFaceClient = require("baidu-aip-sdk").face;
@@ -84,6 +87,8 @@ faceRoute.post('/detection',function(req,res){
         base64Img+=data;
     })
     req.on('end',function(){
+        // console.log(base64Img);
+        ONLINEVIVODETECT(client,base64Img);
         // 人脸检测
         // FACEDETECT(client,base64Img);
         // 人脸注册
@@ -106,9 +111,9 @@ faceRoute.post('/detection',function(req,res){
         // 组列表查询
         // GETGROUPLIST(client);
         // 身份验证
-        let idCard = "530324199802230329";
-        let name = '刘琼';
-        IDCHECK(client,base64Img,idCard,name);
+        // let idCard = "530324199802230329";
+        // let name = '刘琼';
+        // IDCHECK(client,base64Img,idCard,name);
         // 删除某个人脸
         // DELETEFACE(client);
     })
