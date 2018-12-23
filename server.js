@@ -70,10 +70,89 @@ HttpClient.setRequestInterceptor(function(requestOptions) {
 server.use(objMulter.any());
 
 server.post(bodyParser.urlencoded({extended: true}));
-// 用户接口路由
+// 1.用户接口路由
 const userRouter = express.Router();
+// 活体检测
+userRouter.post('/onlineVivoDetection',function(req,res){
+    let chunk = '';
+    // 响应状体： success/fail
+    let resStatus="",
+    // 响应信息提示
+        resMsg ="";
+    req.on('data',function(data){
+        chunk+=data;
+    });
+    req.on('end',function(){
+        const faceImg = chunk;
+        ONLINEVIVODETECT(client,faceImg,function(faceRes){
+            console.log(JSON.stringify(faceRes));
+            console.log(faceRes["error_code"]);
+            if(faceRes["error_code"]==0){
+                let face_liveness = faceRes.result.face_liveness,
+                    faceQuality = faceRes.result.face_list[0].quality.occlusion;
+                //人脸活体指数
+                console.log(face_liveness);
+                // 人脸遮挡信息
+                console.log(faceQuality);
+                // 非活体
+                if(face_liveness<1){
+                    resStatus = "fail";
+                    resMsg = '请将脸部对准摄像头';
+                }else {
+                    // 活体无遮挡
+                    if(faceQuality["left_eye"]>0){
+                        resStatus = "fail";
+                        resMsg = '请勿遮挡左眼';
+                    }
+                    if(faceQuality["right_eye"]>0){
+                        resStatus = "fail";
+                        resMsg = '请勿遮挡右眼';
+                    }
+                    if(faceQuality["node"]>0){
+                        resStatus = "fail";
+                        resMsg = '请勿遮挡鼻子';
+                    }
+                    if(faceQuality["mouth"]>0.6){
+                        resStatus = "fail";
+                        resMsg = '请勿遮挡嘴巴';
+                    }
+                    if(faceQuality["left_cheek"]>0.3){
+                        resStatus = "fail";
+                        resMsg =  '请勿遮挡左脸';
+                    }
+                    if(faceQuality["right_cheek"]>0.3){
+                        resStatus = "fail";
+                        resMsg =  '请勿遮挡右脸';
+                    }
+                    if(faceQuality["chin_contour"]>0.8){
+                        resStatus = "fail";
+                        resMsg =  '请勿遮挡下巴';
+                    }
+                    // 活体无遮挡
+                    else {
+                        resStatus = "success";
+                        resMsg =  '人脸检测成功';
+                    }
+                }
+            }else {
+                resMsg = '未识别到人脸';
+            }
+            res.send({
+                'status': resStatus,
+                'msg': resMsg
+            });
+            res.end();
+        });
+    })
+    // res.end('活体检测');
+    // res.send({
+    //     status: 'success',
+    //     // res: ''
+    // })
+})
 userRouter.post('/login',function(req,res){
     res.end('login');
+    
 })
 userRouter.post('/regist',function(req,res){
     res.end('end');
@@ -87,7 +166,7 @@ faceRoute.post('/detection',function(req,res){
         base64Img+=data;
     })
     req.on('end',function(){
-        // console.log(base64Img);
+        // 活体检测
         ONLINEVIVODETECT(client,base64Img);
         // 人脸检测
         // FACEDETECT(client,base64Img);

@@ -13,10 +13,15 @@
 <body>
     <article>
         <section>
+            <strong id="info">请将脸部对准摄像头</strong>
             <div id="face">
                 <canvas id="canvas"></canvas>
                 <video id="video"></video>
+                <div id="faceAnimation">
+                    <img src="./images/faceAnimation3.png" alt="img">
+                </div>
             </div>
+            <button id="clickPhoto">开始识别人脸</button>
             <div id="choose">
                 <button id="regist">注册</button>
                 <button id="login">登录</button>
@@ -25,6 +30,7 @@
         <footer></footer>
     </article>
     <script src="./js/commonJs/rem.js"></script>
+    <script src="./js/module/sea.js"></script>
     <script src="./js/login.js"></script>
 </body>
 </html>

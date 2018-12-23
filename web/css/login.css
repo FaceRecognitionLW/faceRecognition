@@ -6,19 +6,48 @@ article {
   background-size: cover;
 }
 section {
+  position: relative;
   width: 100%;
-  padding-top: 6rem;
+  padding-top: 2rem;
+}
+#info {
+  display: block;
+  font-size: .7rem;
+  height: 3rem;
+  line-height: 3rem;
+  color: #9bca3e;
+  text-align: center;
+  opacity: 1;
 }
 #face {
-  overflow: hidden;
   position: relative;
   width: 10rem;
   height: 10rem;
   border: 8px solid #e49580;
   border-radius: 50%;
   margin: auto;
-  box-shadow: 0 0 20px #ff634e inset;
+  box-shadow: 0 0 40px #ff634e;
   background-color: #f6f7f7;
+}
+#faceAnimation {
+  display: none;
+}
+#faceAnimation img {
+  position: absolute;
+  top: -20%;
+  left: -20%;
+  width: 140%;
+  opacity: .6;
+  animation: play 3s infinite;
+  transform-origin: center;
+}
+@keyframes play {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 #face canvas,
 #face video {
@@ -29,18 +58,19 @@ section {
 }
 #face video {
   position: absolute;
-  top: -15%;
-  left: -15%;
-  width: 130%;
-  height: 130%;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
 }
 #choose {
   position: relative;
   width: 16rem;
   height: 5rem;
-  margin: 3rem auto;
   border: 3px solid rgba(255, 255, 255, 0.8);
   border-radius: 3rem;
+  margin: auto;
   text-align: center;
 }
 #choose button {
@@ -56,13 +86,42 @@ section {
   border-radius: 50%;
   font-size: 1rem;
   color: #fff;
+  background-color: transparent;
+  transition-duration: .3s;
 }
 #choose #regist {
   left: 1rem;
   background-color: transparent;
   border: 2px solid #fff;
 }
+#choose #regist:focus {
+  background-color: #fff;
+  color: #f4704c;
+}
 #choose #login {
   right: 1rem;
+  color: #f4704c;
+  border: 2px solid #f4704c;
+}
+#choose #login:focus {
   background-color: #f4704c;
+  color: #fff;
+}
+#clickPhoto {
+  display: block;
+  width: 16rem;
+  height: 3rem;
+  outline: none;
+  border: none;
+  border-radius: 2rem;
+  margin: 2rem auto;
+  border: 1px solid #9bca3e;
+  color: #9bca3e;
+  background-color: transparent;
+  font-size: .8rem;
+  transition-duration: .2s;
+}
+#clickPhoto:focus {
+  background-color: #9bca3e;
+  color: #fff;
 }
