@@ -12,15 +12,21 @@
     <article>
         <header>Perfect your message</header>
         <section>
-            <div id="upHead">
-                <input type="file">
-            </div>
-            <div id="full-name">
-                <span>姓名</span>
-                <input type="text" name="name"><br/>
-            </div>
-            <button id="submit">Submit</button>
+            <form action="" enctype="multipart/form-data">
+                <div id="upHead">
+                    <img src="./images/headerImg.png" alt="img">
+                    <input type="file">
+                    <p id="clickToUp">点击上传头像</p>
+                </div>
+                <div id="full-name">
+                    <input type="text" name="name" placeholder="姓名"><br/>
+                </div>
+                <button id="submit" type="submit">Submit</button>
+                <div id="info"></div>
+            </form>
         </section>
     </article>
+    <script src="./js/module/ajax.js"></script>
+    <script src="./js/completeInfo.js"></script>
 </body>
 </html>

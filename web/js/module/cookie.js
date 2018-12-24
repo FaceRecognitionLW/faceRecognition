@@ -14,7 +14,7 @@ var COOKIE = {
     },
     // name:名称，value: 值，expires:域，path: 路径，domain:失效时间，secure:安全标志
     set: function(name,value,expires,path,domain,secure){
-    var cookieText = encodeURIComponent(name)+'='+encodeURIComponent(value);
+        var cookieText = encodeURIComponent(name)+'='+encodeURIComponent(value);
     if(expires instanceof Date ){
         cookieText +='; expires = '+ expires.toGMTString();
     }

@@ -1,5 +1,6 @@
 @charset "utf-8";
 @navColor: rgb(55,54,56);
+@baseColor: rgb(255,99,78);
 
 article {
     width: 100%;
@@ -21,23 +22,56 @@ section {
     text-align: center;
 }
 #upHead {
-    overflow: hidden;
+    position: relative;
     width: 8rem;
     height: 8rem;
-    border: 1px dashed rgb(255,99,78);
+    border: 4px solid rgba(255,99,78,.6);
+    border-radius: 50%;
     margin: auto;
-    background: url('../images/headPhoto.png') no-repeat;
+    box-shadow: 0 0 2rem #ccc;
+    background-size: cover;
+}
+#upHead img {
+    width: 100%;
 }
 #upHead input {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     opacity: 0;
+}
+#clickToUp {
+    position: absolute;
+    top: -2.8rem;
+    left: 0;
+    width: 8rem;
+    height: 2rem;
+    border-radius: 1rem;
+    background-color: @navColor;
+    color: #fff;
+    font-size: .8rem;
+    line-height: 2rem;
+}
+#clickToUp:after {
+    content: '';
+    position: absolute;
+    top: 1.8rem;
+    left: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    margin: auto;
+    border: .6rem solid @navColor;
+    border-left-color: transparent;
+    border-right-color: transparent;
+    border-bottom-color: transparent;
 }
 #full-name {
     width: 20rem;
     height: 6rem;
     margin: 2rem auto;  
-    // border: 1px solid rgb(51,51,51);
     border-radius: 2rem;
     font-size: 1.2rem;
     color: rgb(200,195,194);
@@ -46,22 +80,44 @@ section {
     width: 14rem;
     height: 3rem;
     border: none;
-    border-bottom: 2px solid #fff;
+    border: 2px solid #fff;
+    border-radius: 2rem;
     background-color: transparent;
+    text-align: center;
+    font-size: 1rem;
+    letter-spacing: .1rem;
+    color: #666;
+    box-shadow: 0 0 2rem #ccc;
+    transition-duration: .3s;
+}
+#full-name input:focus {
+    border-color: rgba(255,99,78,.6);;
 }
 button#submit {
     width: 8rem;
     height: 4rem;
     background-color: transparent;
     outline: none;
-    border: 1px solid rgb(255,99,78);
+    border: 1px solid @baseColor;
     border-radius: 2rem;
-    color: rgb(255,99,78);
+    color: @baseColor;
     font-size: 1.2rem;
     text-align: center;
     transition-duration: .2s;
 }
 button#submit:focus {
-    background-color:rgb(255,99,78);
+    background-color:@baseColor;
     color: #fff;
+}
+// 
+#info {
+    // width: 3rem;
+    width: 100%;
+    height: 3rem;
+    background-color: #333;
+    margin: 2rem auto;
+    background: url('../images/ok.png') no-repeat center;
+    background-size: contain;
+    transition-duration: .3s;
+    color: #f00;
 }

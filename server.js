@@ -3,6 +3,7 @@ const server = express();
 const expressStatic = require('express-static');
 const querystring = require('querystring');
 const bodyParser = require('body-parser');
+const fs =require('fs');
 const mysql = require('mysql');
 const multer = require('multer');
 const cookieParser = require('cookie-parser');
@@ -15,7 +16,7 @@ const CONN = mysql.createPool({
     database: 'facesignin'
 });
 // 使用cookie
-// server.use(cookieParser());
+server.use(cookieParser());
 /*人脸交互功能模块*/ 
 // 创建组
 const CREATEGROUP = require('./serverModule/createGroup.js');
@@ -55,6 +56,9 @@ const MATCHFACE = require('./serverModule/matchFace.js');
 const CREATEUSERID = require('./serverFunction/createUserId.js');
 // 数据库操作模块
 const HANDLESQL = require('./serverFunction/handleSql.js');
+// 创建用户上传头像文件名
+const CREATEHEADIMG = require('./serverFunction/createHeadImg.js');
+
 
 // 关于client
 const AipFaceClient = require("baidu-aip-sdk").face;
@@ -88,7 +92,7 @@ HttpClient.setRequestInterceptor(function(requestOptions) {
 server.use(objMulter.any());
 // 
 server.post(bodyParser.urlencoded({extended: true}));
-server.use(bodyParser.json());
+server.use(bodyParser.json({limit: '2100000kb'}));
 // 1.用户接口路由
 const userRouter = express.Router();
 // 活体检测
@@ -232,19 +236,6 @@ userRouter.post('/regist',function(req,res){
                 });
             }
         })
-        // let lookUserIdSql = 'SELECT userId FROM user where tel="'+REQINFO.tel+'";';
-        // HANDLESQL(CONN,lookUserIdSql,function(data){
-        //     if(data.toString()==""){
-        //         // 没有注册过
-        //         resolve(REQINFO.tel);
-        //     }else {
-        //         // 注册过了
-        //         res.send({
-        //             status: 'fail',
-        //             msg: '该手机已经注册过人脸,可直接登录'
-        //         });
-        //     }
-        // })
     })
     .then(data => {
         console.log('没有注册过');
@@ -269,6 +260,7 @@ userRouter.post('/regist',function(req,res){
     .then(data => {
         // 注册人脸
         FACEREGIST(client,REQINFO.faceImg,data.groupId,data.userId);
+        res.cookie('user',data.userId);
     })
     .then(data => {
         res.send({
@@ -279,6 +271,55 @@ userRouter.post('/regist',function(req,res){
     .catch(err => {
         console.log('人脸注册失败'+err);
     });
+})
+userRouter.post('/completeInfo',function(req,res){  
+    // req.body用来获取非文件数据
+    let headImg = req.body.headImg.split(',')[1];
+    let name = req.body.name;
+    let headImgSuffix = req.body.headImg.split(',')[0].split(';')[0].split(':')[1].split('/')[1];
+    let dataBuffer = new Buffer(headImg,'base64');
+    let fileSuffix = headImgSuffix=="png"?".png":".jpg";
+    let USERID = req.cookies["user"];
+    console.log(USERID);
+    console.log(name);
+    new Promise((resolve,reject) => {
+        fs.writeFile('./web/images/com/'+CREATEHEADIMG()+fileSuffix,dataBuffer,function(err){
+            if(err){
+                res.send({
+                    status: 'fail',
+                    msg: '上传头像出现错误'
+                });
+            }else {
+                console.log('头像存储成功');
+                let fileName = "images/com/"+CREATEHEADIMG()+fileSuffix;
+                resolve(fileName);
+            }
+        });
+    })
+    .then(data => {
+        let completeInfoSql = 'UPDATE user SET userName="'+name+'",userImg="'+data+'" where userId="'+USERID+'";';
+        HANDLESQL(CONN,completeInfoSql,function(err,data){  
+            if(err){
+                console.log(err);
+                res.send({
+                    status: 'fail',
+                    msg: '信息完善失败，请稍候重试'
+                });
+            }else {
+                res.send({  
+                    status: 'success',
+                    msg: '信息完善成功'
+                });
+            }
+        })
+    })
+    .catch(err => {
+        res.send({
+            status: 'fail',
+            msg: '上传信息失败'
+        });
+    })
+    res.end('completeInfo');
 })
 server.use('/user',userRouter);
 // 人脸识别功能接口路由
