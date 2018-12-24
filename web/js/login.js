@@ -80,13 +80,14 @@
         // 注册登录
         regist_login: function(faceImg){
             var oChooseBtn = doc.getElementById('choose'),
-                oTelInput = doc.querySelector('#tel input'),
+                // oTelInput = doc.querySelector('#tel input'),
                 oStipInfo = doc.getElementById('info'),
-                oDistingBtn = doc.getElementById('clickPhoto');
-            var telReg = /(^[0-9]{3,4}\ -[0 -9]{3,8}$)|(^[0 -9]{3,8}$)|(^\([0 -9]{3,4}\)[0 -9]{3,8}$)|(^0{0,1}13[0 -9]{9}$)/;
+                oDistingBtn = doc.getElementById('clickPhoto'),
+                oStartBtn = doc.getElementById('clickPhoto');
+            // var telReg = /(^[0-9]{3,4}\ -[0 -9]{3,8}$)|(^[0 -9]{3,8}$)|(^\([0 -9]{3,4}\)[0 -9]{3,8}$)|(^0{0,1}13[0 -9]{9}$)/;
             oChooseBtn.onclick = function(e){
                 // 判断手机号是否不为空，并且合法
-                if(oTelInput.value!==""&&telReg.test(oTelInput.value)&&oDistingBtn.innerHTML=="识别成功") {
+                if(oTelInput.value!==""&&oDistingBtn.innerHTML=="识别成功") {
                     oTelInput.style.borderColor = 'rgb(155,202,62)';
                     e = e||window.e;
                     var target = e.target||e.srcElement;
@@ -94,10 +95,8 @@
                         case 'regist':
                             Login.prototype.ajaxPost({
                                 url: '/user/regist',
-                                // data: faceImg,
                                 data: JSON.stringify({
                                     faceImg: faceImg,
-                                    tel: oTelInput.value
                                 }),
                                 contentType: 'application/json',
                                 success: function(res){
@@ -117,15 +116,22 @@
                             });
                             break;
                         case 'login':
+                            console.log('login');
                             Login.prototype.ajaxPost({
                                 url: '/user/login',
                                 data: JSON.stringify({
                                     faceImg: faceImg,
-                                    tel: oTelInput.value
                                 }),
-                                conentType: 'application/json',
+                                contentType: 'application/json',
                                 success: function(res) {
-                                    console.log(res);
+                                    res = JSON.parse(res);
+                                    if(res.status=="success"){
+                                        oStipInfo.innerHTML = '登录成功';
+                                        window.location.href = 'home.html';
+                                    }else {
+                                        oStipInfo.innerHTML = '未匹配到人脸，请重试';
+                                        oStartBtn.disabled = false;
+                                    }
                                 },
                                 fail: function(status) {
                                     console.log('err:'+status);

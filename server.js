@@ -5,6 +5,7 @@ const querystring = require('querystring');
 const bodyParser = require('body-parser');
 const mysql = require('mysql');
 const multer = require('multer');
+const cookieParser = require('cookie-parser');
 const objMulter = multer();
 // 连接数据库
 const CONN = mysql.createPool({
@@ -13,6 +14,8 @@ const CONN = mysql.createPool({
     password: 'kkxxdgmyt67LIUQIONG',
     database: 'facesignin'
 });
+// 使用cookie
+// server.use(cookieParser());
 /*人脸交互功能模块*/ 
 // 创建组
 const CREATEGROUP = require('./serverModule/createGroup.js');
@@ -44,6 +47,8 @@ const GETGROUPLIST = require('./serverModule/getAllGroupList.js');
 const IDCHECK = require('./serverModule/idCheck.js');
 // onlineVivoDetection活体检测
 const ONLINEVIVODETECT = require('./serverModule/onlineVivoDetection.js');
+// 人脸比对
+const MATCHFACE = require('./serverModule/matchFace.js');
 
 /*功能模块*/ 
 // 创建用户id
@@ -166,26 +171,36 @@ userRouter.post('/onlineVivoDetection',function(req,res){
 })
 userRouter.post('/login',function(req,res){
     console.log('login');
-    console.log(req.body);
-    let faceImg = req.body.faceImg,
-        tel = req.body.tel;
-    console.log(tel);
-    // 找数据库里是否有该手机号，有则继续，否则登录不了
-    new Promise((resolve,reject) => {
-        let getUserIdInTelSql = 'select userId from user where tel="'+tel+'";';
-        HANDLESQL(CONN,getUserIdInTelSql,function(data){
-            if(data.toString()!==""){
-                console.log('有userId，可以登录');
-                console.log(data);
-                resolve(data);
+    let faceImg = req.body.faceImg;
+    // 执行人脸搜索
+    FACESEARCH(client,faceImg,{
+        success: function(data){
+            console.log('人脸搜索成功');
+            console.log(data);
+            console.log(data.result);
+            let userId = data.result.user_list[0].user_id;
+            console.log('用户id:'+ userId);
+            // 搜索成功， 存在该用户
+            if(data.error_code== 0 ){
+                // 使用cookie保存用户信息
+                res.cookie('user',userId);
+                res.send({
+                    status: 'success',
+                    msg: '登录成功'
+                });
+            }else {
+                // 搜索失败，不存在该用户
+                res.send({
+                    status: 'fail',
+                    msg: data.error_msg
+                });
             }
-        })
+        },
+        fail: function(err){    
+            console.log('人脸搜索失败');
+            console.log(err);
+        }
     })
-    .then(data => {
-        // 百度AI比对人脸
-    })
-    // 通过数据库拿到userId,再到百度AI人脸库通过userId拿到人脸，进行人脸比对，比对成功登录，失败则驳回
-
 })
 userRouter.post('/regist',function(req,res){
     console.log('regist');
@@ -193,24 +208,43 @@ userRouter.post('/regist',function(req,res){
     let resStatus = '';
     let resMsg = '';
     console.log('req.body');
-    console.log(req.body.tel);
-    REQINFO = req.body
+    // console.log(req.body.tel);
+    REQINFO = req.body;
     // 人脸注册
     new Promise((resolve,reject) => {
         // 先判断人脸库中是否存在该人脸
-        let lookUserIdSql = 'SELECT userId FROM user where tel="'+REQINFO.tel+'";';
-        HANDLESQL(CONN,lookUserIdSql,function(data){
-            if(data.toString()==""){
-                // 没有注册过
-                resolve(REQINFO.tel);
-            }else {
-                // 注册过了
+        FACESEARCH(client,REQINFO.faceImg,{
+            success: function(data) {
+                console.log('该人脸已经注册过');
+                if(data.error_msg=="SUCCESS"){
+                    res.send({
+                        status: 'fail',
+                        msg: '您已经注册过，请直接登录'
+                    });
+                }else {
+                    resolve();
+                }
+            },
+            fail: function(err) {
                 res.send({
                     status: 'fail',
-                    msg: '该手机已经注册过人脸,可直接登录'
+                    msg: '网络出现问题，请稍候重试'
                 });
             }
         })
+        // let lookUserIdSql = 'SELECT userId FROM user where tel="'+REQINFO.tel+'";';
+        // HANDLESQL(CONN,lookUserIdSql,function(data){
+        //     if(data.toString()==""){
+        //         // 没有注册过
+        //         resolve(REQINFO.tel);
+        //     }else {
+        //         // 注册过了
+        //         res.send({
+        //             status: 'fail',
+        //             msg: '该手机已经注册过人脸,可直接登录'
+        //         });
+        //     }
+        // })
     })
     .then(data => {
         console.log('没有注册过');
@@ -219,10 +253,13 @@ userRouter.post('/regist',function(req,res){
         userId = CREATEUSERID();
         console.log(userId);
         // 保存userId信息
-        let insertFaceSql = 'INSERT INTO user(userId,groupId,tel) values("'+userId+'","'+groupId+'","'+data+'");';
-        HANDLESQL(CONN,insertFaceSql,function(data){
+        let insertFaceSql = 'INSERT INTO user(userId,groupId) values("'+userId+'","'+groupId+'");';
+        HANDLESQL(CONN,insertFaceSql,function(err,data){
             console.log('数据库人脸信息入驻成功');
             console.log(data);
+            if(err){
+                console.log('数据库人脸信息入驻失败:'+err.sqlMessage);
+            }
         });
         return {
             userId: userId,

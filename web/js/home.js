@@ -37,7 +37,11 @@
             var timer = setTimeout(function(){  
                 // oOpenAnimation.style.display = "none";
                 // 如果用户没有登录则跳转到登陆界面，否则直接打开主界面
-                window.location.href = 'login.html';
+                if(!Home.prototype.getCookieModule().get('user')) {
+                    window.location.href = 'login.html';
+                }else {
+                    oOpenAnimation.style.display = 'none';
+                }
                 clearTimeout(timer);
             },2000)
         },
@@ -504,6 +508,9 @@
                         break;
                 }
             }
+        },
+        getCookieModule: function(){
+            return COOKIE;
         }
     };
     var home = new Home();
