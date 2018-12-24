@@ -3,8 +3,16 @@ const server = express();
 const expressStatic = require('express-static');
 const querystring = require('querystring');
 const bodyParser = require('body-parser');
+const mysql = require('mysql');
 const multer = require('multer');
 const objMulter = multer();
+// 连接数据库
+const CONN = mysql.createPool({
+    host: 'localhost',
+    user: 'root',
+    password: 'kkxxdgmyt67LIUQIONG',
+    database: 'facesignin'
+});
 /*人脸交互功能模块*/ 
 // 创建组
 const CREATEGROUP = require('./serverModule/createGroup.js');
@@ -37,6 +45,11 @@ const IDCHECK = require('./serverModule/idCheck.js');
 // onlineVivoDetection活体检测
 const ONLINEVIVODETECT = require('./serverModule/onlineVivoDetection.js');
 
+/*功能模块*/ 
+// 创建用户id
+const CREATEUSERID = require('./serverFunction/createUserId.js');
+// 数据库操作模块
+const HANDLESQL = require('./serverFunction/handleSql.js');
 
 // 关于client
 const AipFaceClient = require("baidu-aip-sdk").face;
@@ -68,8 +81,9 @@ HttpClient.setRequestInterceptor(function(requestOptions) {
 
 // 接收任意文件(由于bodyParser无法处理multipart/form-data类型的数据，所以用multer接收)
 server.use(objMulter.any());
-
+// 
 server.post(bodyParser.urlencoded({extended: true}));
+server.use(bodyParser.json());
 // 1.用户接口路由
 const userRouter = express.Router();
 // 活体检测
@@ -151,11 +165,83 @@ userRouter.post('/onlineVivoDetection',function(req,res){
     // })
 })
 userRouter.post('/login',function(req,res){
-    res.end('login');
-    
+    console.log('login');
+    console.log(req.body);
+    let faceImg = req.body.faceImg,
+        tel = req.body.tel;
+    console.log(tel);
+    // 找数据库里是否有该手机号，有则继续，否则登录不了
+    new Promise((resolve,reject) => {
+        let getUserIdInTelSql = 'select userId from user where tel="'+tel+'";';
+        HANDLESQL(CONN,getUserIdInTelSql,function(data){
+            if(data.toString()!==""){
+                console.log('有userId，可以登录');
+                console.log(data);
+                resolve(data);
+            }
+        })
+    })
+    .then(data => {
+        // 百度AI比对人脸
+    })
+    // 通过数据库拿到userId,再到百度AI人脸库通过userId拿到人脸，进行人脸比对，比对成功登录，失败则驳回
+
 })
 userRouter.post('/regist',function(req,res){
-    res.end('end');
+    console.log('regist');
+    let REQINFO = '';
+    let resStatus = '';
+    let resMsg = '';
+    console.log('req.body');
+    console.log(req.body.tel);
+    REQINFO = req.body
+    // 人脸注册
+    new Promise((resolve,reject) => {
+        // 先判断人脸库中是否存在该人脸
+        let lookUserIdSql = 'SELECT userId FROM user where tel="'+REQINFO.tel+'";';
+        HANDLESQL(CONN,lookUserIdSql,function(data){
+            if(data.toString()==""){
+                // 没有注册过
+                resolve(REQINFO.tel);
+            }else {
+                // 注册过了
+                res.send({
+                    status: 'fail',
+                    msg: '该手机已经注册过人脸,可直接登录'
+                });
+            }
+        })
+    })
+    .then(data => {
+        console.log('没有注册过');
+        let groupdId,userId;
+        groupId = 'group1';
+        userId = CREATEUSERID();
+        console.log(userId);
+        // 保存userId信息
+        let insertFaceSql = 'INSERT INTO user(userId,groupId,tel) values("'+userId+'","'+groupId+'","'+data+'");';
+        HANDLESQL(CONN,insertFaceSql,function(data){
+            console.log('数据库人脸信息入驻成功');
+            console.log(data);
+        });
+        return {
+            userId: userId,
+            groupdId: groupdId
+        };
+    })
+    .then(data => {
+        // 注册人脸
+        FACEREGIST(client,REQINFO.faceImg,data.groupId,data.userId);
+    })
+    .then(data => {
+        res.send({
+            status: 'success',
+            msg: '注册成功'
+        });
+    })
+    .catch(err => {
+        console.log('人脸注册失败'+err);
+    });
 })
 server.use('/user',userRouter);
 // 人脸识别功能接口路由
@@ -180,6 +266,7 @@ faceRoute.post('/detection',function(req,res){
         // FACESEARCHUSERFACEINFO(client,"user1","group1");
         // 获取某个组的所有用户
         // GETGROUPUSERS(client,"group1");
+        // 创建组
         // CREATEGROUP(client,'group2');
         // 人脸复制到另外一个组
         // COPYUSER(client,"user1","group1","group2");

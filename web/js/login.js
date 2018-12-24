@@ -33,6 +33,9 @@
             });
             // 定时拍照
             oStartBtn.onclick = function(){
+                oStartBtn.disabled = true;
+                oStartBtn.style.backgroundColor = 'rgb(155,202,62)';
+                oStartBtn.style.color = '#fff';
                 oFaceAnimation.style.display = 'block';
                 video.style.display = 'block';
                 timer = setInterval(autoPhoto,1000);
@@ -57,11 +60,11 @@
                             res = JSON.parse(res);
                             if(res.status == 'success'){
                                 video.style.display = 'none';
-                                oStipInfo.innerHTML = '识别完毕,请点击注册或登录';
+                                oStipInfo.innerHTML = '识别完毕,请输入手机号，后点击注册或登录';
                                 oStartBtn.innerHTML = '识别成功';
-                                oStartBtn.disabled = true;
                                 oFaceAnimation.style.display = 'none';                 
                                 clearInterval(timer);
+                                Login.prototype.regist_login(faceSrc);
                             }else {
                                 oStipInfo.innerHTML = res.msg;
                                 oStartBtn.innerHTML = '重新识别';
@@ -75,30 +78,65 @@
             }
         },
         // 注册登录
-        regist_login: function(){
-            oChooseBtn = doc.getElementById('choose');
+        regist_login: function(faceImg){
+            var oChooseBtn = doc.getElementById('choose'),
+                oTelInput = doc.querySelector('#tel input'),
+                oStipInfo = doc.getElementById('info'),
+                oDistingBtn = doc.getElementById('clickPhoto');
+            var telReg = /(^[0-9]{3,4}\ -[0 -9]{3,8}$)|(^[0 -9]{3,8}$)|(^\([0 -9]{3,4}\)[0 -9]{3,8}$)|(^0{0,1}13[0 -9]{9}$)/;
             oChooseBtn.onclick = function(e){
-                e = e||window.e;
-                var target = e.target||e.srcElement;
-                switch(target.id) {
-                    case 'regist':
-                        Login.prototype.ajaxPost({
-                            url: '',
-                            data: '',
-                            contentType: '',
-                            success: function(){
-
-                            },
-                            fail: function(){
-                                
-                            }
-                        })
-                        break;
-                    case 'login':
-                        break;
+                // 判断手机号是否不为空，并且合法
+                if(oTelInput.value!==""&&telReg.test(oTelInput.value)&&oDistingBtn.innerHTML=="识别成功") {
+                    oTelInput.style.borderColor = 'rgb(155,202,62)';
+                    e = e||window.e;
+                    var target = e.target||e.srcElement;
+                    switch(target.id) {
+                        case 'regist':
+                            Login.prototype.ajaxPost({
+                                url: '/user/regist',
+                                // data: faceImg,
+                                data: JSON.stringify({
+                                    faceImg: faceImg,
+                                    tel: oTelInput.value
+                                }),
+                                contentType: 'application/json',
+                                success: function(res){
+                                    console.log(res);
+                                    res = JSON.parse(res);
+                                    oStipInfo.innerHTML = res.msg;
+                                    if(res.status=="success"){
+                                        var timer = setTimeout(function(){
+                                            clearTimeout(timer);
+                                            window.location.href = 'completeInfo.html';
+                                        },3000)
+                                    }
+                                },
+                                fail: function(status){
+                                    console.log('err:'+status);
+                                }
+                            });
+                            break;
+                        case 'login':
+                            Login.prototype.ajaxPost({
+                                url: '/user/login',
+                                data: JSON.stringify({
+                                    faceImg: faceImg,
+                                    tel: oTelInput.value
+                                }),
+                                conentType: 'application/json',
+                                success: function(res) {
+                                    console.log(res);
+                                },
+                                fail: function(status) {
+                                    console.log('err:'+status);
+                                }
+                            });
+                            break;
+                    }
+                }else {
+                    oTelInput.style.borderColor = '#f00';
                 }
             }
-
         },
         ajaxPost: function(config){
             var xhr = new XMLHttpRequest();
