@@ -26,7 +26,7 @@ function ajax(config){
 			sendData="?"+arr[0];
 		}
 	}else {
-			sendData = '';
+		sendData = '';
 	}
 
 	if(config.method.toLowerCase()=="get"){

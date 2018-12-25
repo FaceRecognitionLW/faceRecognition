@@ -7,6 +7,7 @@ const fs =require('fs');
 const mysql = require('mysql');
 const multer = require('multer');
 const cookieParser = require('cookie-parser');
+const moment = require('moment');
 const objMulter = multer();
 // 连接数据库
 const CONN = mysql.createPool({
@@ -58,7 +59,8 @@ const CREATEUSERID = require('./serverFunction/createUserId.js');
 const HANDLESQL = require('./serverFunction/handleSql.js');
 // 创建用户上传头像文件名
 const CREATEHEADIMG = require('./serverFunction/createHeadImg.js');
-
+// 时间格式化
+const FORMAT = require('./serverFunction/format.js');
 
 // 关于client
 const AipFaceClient = require("baidu-aip-sdk").face;
@@ -172,7 +174,7 @@ userRouter.post('/onlineVivoDetection',function(req,res){
     //     status: 'success',
     //     // res: ''
     // })
-})
+});
 userRouter.post('/login',function(req,res){
     console.log('login');
     let faceImg = req.body.faceImg;
@@ -205,7 +207,7 @@ userRouter.post('/login',function(req,res){
             console.log(err);
         }
     })
-})
+});
 userRouter.post('/regist',function(req,res){
     console.log('regist');
     let REQINFO = '';
@@ -271,7 +273,7 @@ userRouter.post('/regist',function(req,res){
     .catch(err => {
         console.log('人脸注册失败'+err);
     });
-})
+});
 userRouter.post('/completeInfo',function(req,res){  
     // req.body用来获取非文件数据
     let headImg = req.body.headImg.split(',')[1];
@@ -283,7 +285,7 @@ userRouter.post('/completeInfo',function(req,res){
     console.log(USERID);
     console.log(name);
     new Promise((resolve,reject) => {
-        fs.writeFile('./web/images/com/'+CREATEHEADIMG()+fileSuffix,dataBuffer,function(err){
+        fs.writeFile('./web/images/user/'+CREATEHEADIMG()+fileSuffix,dataBuffer,function(err){
             if(err){
                 res.send({
                     status: 'fail',
@@ -291,21 +293,24 @@ userRouter.post('/completeInfo',function(req,res){
                 });
             }else {
                 console.log('头像存储成功');
-                let fileName = "images/com/"+CREATEHEADIMG()+fileSuffix;
+                let fileName = "images/user/"+CREATEHEADIMG()+fileSuffix;
                 resolve(fileName);
             }
         });
     })
     .then(data => {
+        console.log(data);
         let completeInfoSql = 'UPDATE user SET userName="'+name+'",userImg="'+data+'" where userId="'+USERID+'";';
-        HANDLESQL(CONN,completeInfoSql,function(err,data){  
+        HANDLESQL(CONN,completeInfoSql,function(data,err){  
             if(err){
-                console.log(err);
+                console.log(err.sqlMessage);
+                console.log('信息完善失败')
                 res.send({
                     status: 'fail',
                     msg: '信息完善失败，请稍候重试'
                 });
             }else {
+                console.log('信息完善成功');
                 res.send({  
                     status: 'success',
                     msg: '信息完善成功'
@@ -319,9 +324,139 @@ userRouter.post('/completeInfo',function(req,res){
             msg: '上传信息失败'
         });
     })
-    res.end('completeInfo');
-})
+});
 server.use('/user',userRouter);
+
+// 2.社群接口路由
+const comRouter = express.Router();
+comRouter.post('/createCom',function(req,res){
+    // console.log(req.body);
+    let headImg = req.body.headImg.split(',')[1],
+        headImgSuffix = req.body.headImg.split(',')[0].split(';')[0].split(':')[1].split('/')[1];
+        fileSuffix = headImgSuffix=="png"?".png":".jpg";
+        comName = req.body.comName,
+        questions = req.body.questions;
+        USERID = req.cookies["user"],
+        dataBuffer = new Buffer(headImg,'base64');
+    console.log(USERID);
+    //先把图片放到文件夹中，再同时在community中插入com基本信息，在com_question中插入问题
+    new Promise((resolve,reject) => {
+        let fileName = 'images/com/'+CREATEHEADIMG()+fileSuffix;
+        fs.writeFile('./web/'+fileName,dataBuffer,function(err){
+            if(err){
+                reject(err.sqlMessage);
+            }else {
+                console.log('社群头像已放入文件夹');
+                resolve(fileName);
+            }
+        })
+    })
+    .then(data =>{
+        // 插入community表格
+        let insertComSql = 'INSERT into community(createUserId,comName,comImg) values("'+USERID+'","'+comName+'","'+data+'");';
+        HANDLESQL(CONN,insertComSql,function(data,err){
+            if(err){
+                console.log('插入community失败');
+            }else {
+                console.log('插入community成功');
+                console.log(data);
+                console.log(data.insertId);
+                // 将问题插入con_question表格
+                let insertItem = '';
+                for(var i=0,len=questions.length;i<len;i++){
+                    insertItem+='('+data.insertId+','+'"'+questions[i]+'"),';
+                }
+                insertItem = insertItem.substr(0,insertItem.length-1);
+                console.log(insertItem);
+                let insertComQue = 'INSERT INTO com_question(comId,question) values'+insertItem;
+                HANDLESQL(CONN,insertComQue,function(data,err){
+                    if(err){
+                        console.log('插入com_question失败');
+                        res.send({
+                            status: 'fail',
+                            msg: '创建社群失败'
+                        });
+                    }else {
+                        console.log('插入com_question成功');
+                        res.send({
+                            status: 'success',
+                            msg: '创建社群成功'
+                        });
+                    }
+                })
+            }
+        });
+    })
+    .catch(err => {
+        res.send({
+            status: 'fail',
+            msg: '创建社群失败'
+        });
+    })
+});
+comRouter.get('/:id',function(req,res){
+    let reqId = req.params.id;
+    let USERID = req.cookies["user"];
+    switch(reqId) {
+        // 拉取该用户创建的所有社群
+        case 'getCreatedCom':
+            console.log('getCreatedCom');
+            let getCreatedComSql = 'SELECT community.comId,community.comName,community.comAllman,community.comPublishTimes,comCreateTime,comImg,user.userName FROM community,user where createUserId="'+USERID+'" and community.createUserId=user.userId';
+            HANDLESQL(CONN,getCreatedComSql,function(data,err){
+                if(err){
+                    console.log(err.sqlMessage);
+                    res.send({
+                        status: 'fail',
+                        msg: '社群信息拉取失败'
+                    });
+                }else {
+                    console.log('社群信息拉取成功');
+                    res.send({
+                        status: 'success',
+                        data: data
+                    });
+                }
+            });
+            break;
+        // 删除某个社群
+        case 'delCreatedCom':
+            
+            break;
+    }
+    
+})
+comRouter.post('/publishSign',function(req,res){
+    console.log(req.body);
+    let reqInfo = {
+        comId: req.body.comId,
+        managerId: req.cookies["user"],
+        addr: req.body.addr,
+        latitude: req.body.latitude,
+        longitude: req.body.longitude,
+        range: req.body.range,
+        startTime: moment(req.body.startTime).format("'YYYY-MM-DD HH:mm:ss'"),
+        endTime: moment(req.body.endTime).format("'YYYY-MM-DD HH:mm:ss'")
+    };
+    let insertPublishSignSql = 'INSERT INTO publish(comId,managerId,signAddr,latitude,longitude,signRange,startTime,endTime) values("'+reqInfo.comId+'","'+reqInfo.managerId+'","'+reqInfo.addr+'","'+reqInfo.latitude+'","'+reqInfo.longitude+'","'+reqInfo.range+'","'+reqInfo.startTime+'","'+reqInfo.endTime+'");';
+    HANDLESQL(CONN,insertPublishSignSql,function(data,err){
+        if(err){
+            console.log('插入publish失败');
+            res.send({
+                status: 'fail',
+                msg: '发布签到信息失败'
+            });
+        }else {
+            console.log('插入publish成功');
+            res.send({
+                status: 'success',
+                msg: '发布签到信息成功'
+            });
+        }
+    });
+})
+server.use('/community',comRouter);
+
+
 // 人脸识别功能接口路由
 const faceRoute = express.Router();
 faceRoute.post('/detection',function(req,res){

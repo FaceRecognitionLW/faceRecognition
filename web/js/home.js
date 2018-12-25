@@ -4,7 +4,7 @@
         // 初始化界面
         this.init();
         // 计算用户的经纬度
-        this.position();
+        // this.position();
         // 根据经纬度描绘出地图
         // this.showMap();
         // 头部事件委托
@@ -25,6 +25,8 @@
         this.handleAdminCom();
         // 控制社群详情事件委托
         this.handleComDetail();
+        // 渲染社群管理界面信息
+        this.getAdminComInfo();
     }
     Object.defineProperty(Home.prototype,'constructor',{
         enumerable: false,
@@ -34,18 +36,19 @@
         // 初始化
         init: function(){
             var oOpenAnimation = doc.getElementById('stage');
-            var timer = setTimeout(function(){  
-                // oOpenAnimation.style.display = "none";
-                // 如果用户没有登录则跳转到登陆界面，否则直接打开主界面
-                if(!Home.prototype.getCookieModule().get('user')) {
+            if(Home.prototype.getCookieModule().get('user')) {
+                oOpenAnimation.style.display = 'none';
+            }else {
+                var timer = setTimeout(function(){  
+                    // oOpenAnimation.style.display = "none";
+                    // 如果用户没有登录则跳转到登陆界面，否则直接打开主界面
                     window.location.href = 'login.html';
-                }else {
-                    oOpenAnimation.style.display = 'none';
-                }
-                clearTimeout(timer);
-            },2000)
+                    clearTimeout(timer);
+                },2000)
+            }
         },
-        position: function(){
+        // 获取用户的经纬度
+        position: function(callback){
             console.log('position');
             navigator.geolocation.getCurrentPosition(function(position){
                 console.log('成功');
@@ -53,13 +56,15 @@
                 console.log('用户十进制经度: '+position.coords.longitude);
                 var lati = position.coords.latitude;
                 var longi = position.coords.longitude;
-                Home.prototype.translateCoordinate(lati,longi);
+                callback&&callback(lati,longi);
+                // Home.prototype.translateCoordinate(lati,longi);
                 // Home.prototype.indoorMap(lati,longi);
             },function(err){
                 console.log('Error code :'+err.code);
                 console.log('Erroe message: '+err.message)
             })
         },
+        // 将GPS经纬度转换为百度……
         translateCoordinate: function(lanti,longi){
             var x = lanti,
                 y = longi;
@@ -94,6 +99,7 @@
                 convertor.translate(pointArr, 1, 5, translateCallback)
             },1000);
         },
+        // 室内地图
         indoorMap: function(lati,longi){
             // 百度地图API功能
             var map = new BMap.Map("map"); // 创建Map实例
@@ -106,6 +112,7 @@
             // 创建室内图实例
             var indoorManager = new BMapLib.IndoorManager(map);
         },
+        // 显示地图
         showMap: function(lantitude,longitude){
             // 创建地图实例  
             var map = new BMap.Map("map");
@@ -160,7 +167,6 @@
                 oSearchCom = doc.getElementById('search-com');
                 oHeaderMenuLis = doc.querySelectorAll('#menu li i'),
                 oFooterLis = doc.querySelectorAll('footer li');
-            console.log(oPublishHistory);
             oMenu.ontouchstart = function(e){
                 e = e||window.e;
                 var target = e.target||e.srcElement;
@@ -267,11 +273,27 @@
             var oPublishBox = doc.getElementById('publish-sign-quick'),
                 oRangeInput = doc.querySelector('#publish-sign-quick input[type="range"]'),
                 oRangeShow = doc.querySelector('#publish-sign-quick .range-show');
+            var oSignInfo = {
+                comId: '',
+                addrInput: doc.querySelector('#publish-sign-quick input[name="addr"]'),
+                lantitudeInput: doc.querySelector('#publish-sign-quick input[name="latitude"]'),
+                longitudeInput: doc.querySelector('#publish-sign-quick input[name="longitude"]'),
+                startTimeInput: doc.querySelector('#publish-sign-quick input[name="startTime"]'),
+                endTimeInput: doc.querySelector('#publish-sign-quick input[name="endTime"]'),
+                rangeInput: doc.querySelector('#publish-sign-quick input[name="range"]')
+            };
             oPublishBox.ontouchstart = function(e){
                 e = e||window.e;
                 var target = e.target||e.srcElement;
                 switch(target.className) {
                     // 关闭
+                    case 'click-to-location':
+                        // 定位
+                        Home.prototype.position(function(lati,longi){
+                            oSignInfo.lantitudeInput.value = lati;
+                            oSignInfo.longitudeInput.value = longi;
+                        });
+                        break;
                     case 'iconfont icon-guanbi close':
                     case 'reset':
                         this.style.transform = 'scale(0)';
@@ -286,16 +308,115 @@
         },
         //  创建社群
         handleCreateCom: function(){
-            var oCreateComBox = doc.getElementById('create-com');
+            var oCreateComBox = doc.getElementById('create-com'),
+                oForm = doc.querySelector('#create-com form'),
+                oHeadImg = doc.querySelector('#create-com .headPhoto img'),
+                oFileIput = doc.querySelector('#create-com input[name="headPhoto"]'),
+                oComName = doc.querySelector('#create-com input[name="comName"]'),
+                oSetQueBtn = doc.querySelector('#create-com p em'),
+                oResetBtn = doc.querySelector('#create-com .reset'),
+                oSumitBtn = doc.querySelector('#create-com .submit'),
+                oLastLine = doc.querySelector('#create-com p:last-child'),
+                // 用来存放上传头像的base64
+                HEADIMG = '';
+            console.log(oLastLine);
+            // 上传头像
+            oFileIput.onchange = function(){
+                if(this.value){
+                    var file = this.files[0];
+                    // 将图片放入头像框中
+                    readFile(file);
+                    // 将头像转为base64格式
+                    imgToBase64(file);
+                }
+            };
+            // 将图片放在框内
+            function readFile(file){
+                var obj = new FileReader(file);
+                obj.readAsDataURL(file);
+                obj.onload = function(){
+                    oHeadImg.src = this.result;
+                }
+            }
+            // 取消表单默认事件，用ajax代替
+            oForm.onsubmit = function(e){
+                e = e||window.e;
+                e.preventDefault();
+            };
+            
+            // 事件委托
             oCreateComBox.ontouchstart = function(e){
                 e = e||window.e;
                 var target = e.target||e.srcElement;
                 switch(target.className) {
+                    // 添加问题栏目
+                    case 'addQue':
+                        console.log('add que');
+                        var item = doc.createElement('p');
+                        item.innerHTML = '<input type="text" name="question"><i class="iconfont icon-guanbi1"></i>';
+                        oForm.insertBefore(item,oLastLine);
+                        break;
+                    // 删除问题栏目
+                    case 'iconfont icon-guanbi1':
+                        oForm.removeChild(target.parentNode);
+                        break;
                     case 'reset':
+                        console.log('reset');
                         this.style.transform = 'scale(0)';
                         break;
                     case 'submit':
+                        // 把几个问题理一下
+                        var questionInput = doc.querySelectorAll('#create-com input[name="question"]');
+                        var questionList = [];
+                        for(var i=0,len=questionInput.length;i<len;i++){
+                            questionList.push(questionInput[i].value);
+                        }
+                        console.log(questionList);
+                        ajax({
+                            url: 'community/createCom',
+                            method: 'post',
+                            data: {
+                                headImg: HEADIMG,
+                                comName: oComName.value,
+                                questions: questionList
+                            },
+                            contentType: 'application/json',
+                            success: function(res){
+                                res = JSON.parse(res);
+                                console.log(res);
+                                if(res.status =="success"){
+                                    // 创建成功
+                                    handleStipInfo(res.msg);
+                                    oCreateComBox.style.transform = 'scale(0)';
+                                }else {
+                                    // 创建失败
+                                    handleStipInfo(res.msg);
+                                }
+                            },
+                            fail: function(err){
+                                console.log('err: '+err);
+                            }
+                        })
                         break;
+                }
+            };
+            function imgToBase64(file){
+                var reader = new FileReader();
+                // 允许上传的最大值2M
+                var allowImgFileSize = 2100000;
+                var imgUrlBase64;
+                if(file){
+                    // 将文件以Data URL的形式读入页面
+                    imgUrlBase64 = reader.readAsDataURL(file);
+                    reader.onload = function(){
+                        if(reader.result.length!=0&&allowImgFileSize<reader.result.length){
+                            alert('上传失败，请上传不大于2M的图片');
+                            return;
+                        }else {
+                            HEADIMG = reader.result;
+                            console.log(reader.result.split(',')[0]);
+                        }
+                    }
                 }
             }
         },
@@ -420,24 +541,53 @@
                 oRangeInput = doc.querySelector('#pushlish-sign input[type="range"]'),
                 oRangeShow = doc.querySelector('#pushlish-sign .range-show'),
                 oCreateCom = doc.getElementById('create-com');
+            var oSignInfo = {
+                comId: '',
+                addrInput: doc.querySelector('#pushlish-sign input[name="addr"]'),
+                lantitudeInput: doc.querySelector('#pushlish-sign input[name="latitude"]'),
+                longitudeInput: doc.querySelector('#pushlish-sign input[name="longitude"]'),
+                startTimeInput: doc.querySelector('#pushlish-sign input[name="startTime"]'),
+                endTimeInput: doc.querySelector('#pushlish-sign input[name="endTime"]'),
+                rangeInput: doc.querySelector('#pushlish-sign input[name="range"]')
+            };
             oAdminCom.ontouchstart = function(e){
                 e = e||window.e;
                 var target = e.target||e.srcElement;
-                console.log(target);
-                if(target.nodeName=="BUTTON"){  
-                    oPublishSign.style.transform = 'scale(1)';
-                }
                 if(target.id=="add-com-btn") {
                     target.style.color = 'rgb(155,202,62)';
                     oCreateCom.style.transform = 'scale(1)';
                 }
+                switch(target.className) {
+                    case 'publish-sign':
+                        oSignInfo.comId = target.parentNode.getAttribute('comId');
+                        oPublishSign.style.transform = 'scale(1)';
+                        break;
+                    case 'iconfont icon-shanchutianchong':
+                        // 点击删除
+                        var reply = confirm('确定删除吗？');
+                        if(reply) {
+                            // 发送删除请求
+                            let delComId = target.parentNode.getAttribute('comId');
+                            console.log(delComId);
+                            delAdminComInfo(delComId);
+                        }
+                        break;
+                }
             };
-           
+            //发布签到信息事件委托    
             oPublishSign.ontouchstart = function(e){
                 e = e||window.e;
                 var target = e.target||e.srcElement;
                 e.stopPropagation();
                 switch(target.className) {
+                    // 点击定位
+                    case 'click-to-location':
+                        // 定位
+                        Home.prototype.position(function(lati,longi){
+                            oSignInfo.lantitudeInput.value = lati;
+                            oSignInfo.longitudeInput.value = longi;
+                        });
+                        break;
                     case 'iconfont icon-guanbi close':
                         oPublishSign.style.transform = 'scale(0)';
                         break;
@@ -445,16 +595,12 @@
                         oPublishSign.style.transform = 'scale(0)';
                         break;
                     case 'submit':
+                        if(oSignInfo.lantitudeInput.value&&oSignInfo.longitudeInput.value) {
+                            Home.prototype.publishSign(oSignInfo);
+                        }
                         break;
                 }
             };
-            // oAdminCom.ontouchstart = function(e){
-            //     e = e||window.e;
-            //     var target = e.target||e.srcElement;
-            //     if(target.id=="add-com-btn") {
-            //         target.style.color = '#fff';
-            //     }
-            // };
             oRangeInput.onchange = function(){
                 oRangeShow.innerHTML = this.value;
             };
@@ -508,6 +654,79 @@
                         break;
                 }
             }
+        },
+        // 拉取‘社群管理界面’信息请求
+        getAdminComInfo: function(){
+            ajax({
+                url: '/community/getCreatedCom',
+                method: 'get',
+                contentType: 'application/x-www-form-urlencoded',
+                success: function(res){
+                    res = JSON.parse(res);
+                    console.log(res);
+                    Home.prototype.renderAdminComInfo(res.data);
+                },
+                fail: function(err){
+                    console.log('err: '+err);
+                }
+            })
+        },
+        // 删除社群的请求
+        delAdminComInfo: function(comId){
+            ajax({
+                url: '/community/delCreatedCom',
+                method: 'get',
+                data: {
+                    comId: comId
+                },
+                contentType: 'application/x-www-form-urlencoded',
+                success: function(res) {
+                    console.log(res);
+                },
+                fail: function(err){
+                    console.log('err: '+err);
+                }
+            })
+        },
+        // 发布签到信息请求
+        publishSign: function(oSignInfo) {
+            ajax({
+                url: 'community/publishSign',
+                method: 'post',
+                data: {
+                    comId: oSignInfo.comId,
+                    addr: oSignInfo.addrInput.value,
+                    latitude: oSignInfo.lantitudeInput.value,
+                    longitude: oSignInfo.longitudeInput.value,
+                    startTime: new Date(oSignInfo.startTimeInput.value).getTime(),
+                    endTime: new Date(oSignInfo.endTimeInput.value).getTime(),
+                    range: oSignInfo.rangeInput.value
+                },
+                contentType: 'application/json',
+                success: function(res){
+                    res = JSON.parse(res);
+                    console.log(res);
+                    handleStipInfo(res.msg);
+                    if(res.status == "success"){
+                        doc.getElementById('pushlish-sign').style.transform = 'scale(0)';
+                    }
+                },
+                fail: function(err){
+                    console.log('err: '+err);
+                }
+            })
+        },
+        // 渲染'社群管理界面'信息
+        renderAdminComInfo: function(data){
+            var oBox = doc.querySelector('#admin-com ul');
+            var frag = doc.createDocumentFragment();
+            for(var i=0,len=data.length;i<len;i++){
+                var item = doc.createElement('li');
+                item.setAttribute('comId',data[i].comId);
+                item.innerHTML = '<div class="img"><img src="./'+data[i].comImg+'" alt="img"></div><div class="info"><p>'+data[i].comName+'</p><p><i class="iconfont icon-icon_zhanghao"></i>'+data[i].userName+'</p><p><i class="iconfont icon-qunzutianchong"></i>总人数</p><p><i class="iconfont icon-get"></i><a href=":void(0)">历史签到信息</a></p></div><button class="publish-sign">发布签到</button><i class="iconfont icon-shanchutianchong"></i>';
+                frag.appendChild(item);
+            }
+            oBox.appendChild(frag);
         },
         getCookieModule: function(){
             return COOKIE;

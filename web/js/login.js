@@ -24,6 +24,7 @@
                 faceSrc = '',
                 timer = null;
             navigator.mediaDevices.getUserMedia({
+            // navigator.getUserMedia({
                 video: true,
                 audio: false
             })
@@ -87,8 +88,7 @@
             // var telReg = /(^[0-9]{3,4}\ -[0 -9]{3,8}$)|(^[0 -9]{3,8}$)|(^\([0 -9]{3,4}\)[0 -9]{3,8}$)|(^0{0,1}13[0 -9]{9}$)/;
             oChooseBtn.onclick = function(e){
                 // 判断手机号是否不为空，并且合法
-                if(oTelInput.value!==""&&oDistingBtn.innerHTML=="识别成功") {
-                    oTelInput.style.borderColor = 'rgb(155,202,62)';
+                if(oDistingBtn.innerHTML=="识别成功") {
                     e = e||window.e;
                     var target = e.target||e.srcElement;
                     switch(target.id) {

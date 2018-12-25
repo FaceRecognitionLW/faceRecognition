@@ -13,6 +13,12 @@
 </head>
 <body>
     <article>
+        <!-- 开场动画 -->
+        <div id="stage">
+            <div id="loading">
+                <img src="./images/loading.png" alt="loading">
+            </div>
+        </div>
         <header>
             <div id="user">
                 <div id="head-img">
@@ -162,58 +168,42 @@
                         <p><i class="iconfont icon-qunzutianchong"></i>总人数</p>
                         <p><i class="iconfont icon-get"></i><a href="">历史签到信息</a></p>
                     </div>
-                    <button>发布签到</button>
-                </li>
-                <li>
-                    <div class="img">
-                        <img src="./images/com/1.png" alt="">
-                    </div>
-                    <div class="info">
-                        <p>数媒1501班</p>
-                        <p><i class="iconfont icon-icon_zhanghao"></i>创建人</p>
-                        <p><i class="iconfont icon-qunzutianchong"></i>总人数</p>
-                        <p><i class="iconfont icon-get"></i><a href="">历史签到信息</a></p>
-                    </div>
-                    <button>发布签到</button>
-                </li>
-                <li>
-                    <div class="img">
-                        <img src="./images/com/1.png" alt="">
-                    </div>
-                    <div class="info">
-                        <p>数媒1501班</p>
-                        <p><i class="iconfont icon-icon_zhanghao"></i>创建人</p>
-                        <p><i class="iconfont icon-qunzutianchong"></i>总人数</p>
-                        <p><i class="iconfont icon-get"></i><a href="">历史签到信息</a></p>
-                    </div>
-                    <button>发布签到</button>
+                    <button class="publish-sign">发布签到</button>
+                    <i class="iconfont icon-shanchutianchong"></i>
                 </li>
             </ul>
             <div id="add-com-btn">
                 +
             </div>
+            <!-- 发布签到信息 -->
             <div id="pushlish-sign">
                 <i class="iconfont icon-guanbi close"></i>
-                <p><i class="iconfont icon-ditu-dibiao"></i>地点</p>
-                <input type="text" name="addr">
+                <p><i class="iconfont icon-ditu-dibiao"></i>地址</p>
+                <input type="text" name="addr">  
+                <p><i class="iconfont icon-ditu-dibiao"></i><button class="click-to-location">点击定位</button></p>
+                <input type="text" name="latitude" disabled=true placeholder="经度">
+                <input type="text" name="longitude" disabled=true placeholder="纬度">
                 <p><i class="iconfont icon-ditu-huan"></i>开始时间</p>
                 <input type="datetime-local" name="startTime">
                 <p><i class="iconfont icon-ditu-huan"></i>结束时间</p>
                 <input type="datetime-local" name="endTime">
-                <p><i class="iconfont icon-fabusekuai"></i>范围 : <span class="range-show">0</span></p>
+                <p><i class="iconfont icon-fabusekuai"></i>范围(米) : <span class="range-show">0</span></p>
                 <input type="range" name="range" min="0" max="1000" step="1" value="10">
                 <p><button class="reset">取消</button><button class="submit">提交</button></p>
             </div>
         </div>
         <!-- 创建社群 -->
         <div id="create-com">
-            <div class="headPhoto">
-                <img src="./images/headerImg.png" alt="">
-            </div>
-            <p><i class="iconfont icon-wenjianjia"> 上传头像</i><input type="file" name="headPhoto"></p>
-            <p><i class="iconfont icon-zihangche"> 社群名</i><input type="text" name="comName"></p>
-            <p><i class="iconfont icon-icon_yiwenkongxin"> 设置问题</i><em>+</em></p>
-            <p><button class="reset">取消</button><button class="submit">提交</button></p>
+            <form action="">
+                <div class="headPhoto">
+                    <img src="./images/headerImg.png" alt="">
+                </div>
+                <p><i class="iconfont icon-wenjianjia"> 上传头像</i><input type="file" name="headPhoto"></p>
+                <p><i class="iconfont icon-zihangche"> 社群名</i><input type="text" name="comName"></p>
+                <p><i class="iconfont icon-icon_yiwenkongxin"> 设置问题</i><em class="addQue">+</em></p>
+                <p><input type="text" name="question"><i class="iconfont icon-guanbi1"></i></p>
+                <p><button type="reset" class="reset">取消</button><button class="submit">提交</button></p>
+            </form>
         </div>
         <!-- 发布签到的的快捷方式 -->
         <div id="publish-sign-quick">
@@ -223,13 +213,16 @@
                 <option value="社群3">社群3</option>
             </select>
             <i class="iconfont icon-guanbi close"></i>
-            <p><i class="iconfont icon-ditu-dibiao"></i>地点</p>
-            <input type="text" name="addr">
+            <p><i class="iconfont icon-ditu-dibiao"></i>地址</p>
+            <input type="text" name="addr">  
+            <p><i class="iconfont icon-ditu-dibiao"></i><button class="click-to-location">点击定位</button></p>
+            <input type="text" name="latitude" disabled=true placeholder="经度">
+            <input type="text" name="longitude" disabled=true placeholder="纬度">
             <p><i class="iconfont icon-ditu-huan"></i>开始时间</p>
             <input type="datetime-local" name="startTime">
             <p><i class="iconfont icon-ditu-huan"></i>结束时间</p>
             <input type="datetime-local" name="endTime">
-            <p><i class="iconfont icon-fabusekuai"></i>范围 : <span class="range-show">0</span></p>
+            <p><i class="iconfont icon-fabusekuai"></i>范围(米) : <span class="range-show">0</span></p>
             <input type="range" name="range" min="0" max="1000" step="1" value="10">
             <p><button class="reset" type="reset">取消</button><button class="submit">提交</button></p>
         </div>
@@ -497,15 +490,15 @@
             </ul>
         </div>
         <!-- 正式签到 -->
-        <!-- 开场动画 -->
-        <div id="stage">
-            <div id="loading">
-                <img src="./images/loading.png" alt="loading">
-            </div>
-        </div>
+        <!-- 提示框 -->
+        <div id="stipInfoBox">
+            提示框
+        </div> 
     </article>
     <script src="./js/commonJs/rem.js"></script>
     <script src="./js/module/cookie.js"></script>
+    <script src="./js/module/ajax.js"></script>
+    <script src="./js/module/handleStipInfo.js"></script>
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=UIjZsjNBAFjp6sofNT6IVKOnS88lcb8p"></script>
     <script type="text/javascript" src="http://api.map.baidu.com/library/IndoorMap/1.0/src/indoor.min.js?v=1.0.1 "></script>
     <script src="./js/home.js"></script>

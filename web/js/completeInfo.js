@@ -32,7 +32,6 @@
                 var obj = new FileReader(file);
                 obj.readAsDataURL(file);
                 obj.onload = function(){
-                    var img = new Image();
                     oUpHeadImg.src = this.result;
                     oUpHeadBox.style.overflow = 'hidden';
                 }
@@ -78,6 +77,7 @@
                             console.log(res);
                             if(res.status=='success'){
                                 oInfo.style.height = '3rem';
+                                window.location.href = 'home.html';
                             }else {
                                 oInfo.innerHTML = res.msg;
                                 oInfo.style.background = 'none';
