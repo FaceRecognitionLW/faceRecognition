@@ -717,21 +717,48 @@
                         oAnswerBox.style.transform = 'scale(0)';
                         break;
                     case 'submit':
-                        // 发送请求
-                        ajax({
-                            url: '/community/reqToIntoCom',
-                            method: 'post',
-                            data: {
-
-                            },
-                            contentType: 'application/json',
-                            success: function(res){
-                                console.log(res);
-                            },
-                            fail: function(err){
-                                console.log('err: '+err);
+                        var oQuestions = doc.querySelectorAll('#answer-question ul li');
+                            oAnswer = doc.querySelectorAll('#answer-question ul li input'),
+                            answerList = {};
+                            open = false;
+                        console.log(oQuestions);
+                        console.log(oAnswer);
+                        // 判断是否回答完所有问题
+                        for(var i=0,len=oAnswer.length;i<len;i++){
+                            if(oAnswer[i].value==""){
+                                break;
+                            }else if(i==len-1&&oAnswer[i].value!==""){
+                                open = true;
                             }
-                        })
+                        }
+                        for(var i=0,len=oAnswer.length;i<len;i++){
+                            var questionId = oAnswer[i].parentNode.getAttribute('questionId');
+                            answerList[questionId] = oAnswer[i].value;
+                        }
+                        console.log(answerList);
+                        // 发送请求
+                        if(open){
+                            console.log('可以发送');
+                            ajax({
+                                url: '/community/reqToIntoCom',
+                                method: 'post',
+                                data: answerList,
+                                contentType: 'application/json',
+                                success: function(res){
+                                    res = JSON.parse(res);
+                                    console.log(res);
+                                    handleStipInfo(res.msg);
+                                    if(res.status == 'success'){
+                                        oAnswerBox.style.transform = 'scale(0)';
+                                    }
+                                },
+                                fail: function(err){
+                                    console.log('err: '+err);
+                                }
+                            })
+                        }else {
+                            alert('请回答完所有问题');
+                        }
                         break;
                 }
             }

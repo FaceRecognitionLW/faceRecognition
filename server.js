@@ -529,8 +529,32 @@ comRouter.post('/publishSign',function(req,res){
 })
 // 回答问题申请进入社群
 comRouter.post('/reqToIntoCom',function(req,res){
-    console.log('reqToIntoCom');
+    let USERID = req.cookies["user"];
     console.log(req.body);
+    let REQINFO = req.body;
+    // 将问题存进数据库com_answer
+    let insertValues = '';
+    for(let key in REQINFO) {
+        insertValues+='('+parseInt(key)+',"'+REQINFO[key]+'","'+USERID+'"),';
+    }
+    insertValues = insertValues.substr(0,insertValues.length-1);
+    let reqToIntoComSql = 'INSERT INTO com_answer(questionId,answer,userId) values'+insertValues;
+    console.log(reqToIntoComSql);
+    HANDLESQL(CONN,reqToIntoComSql,function(data,err){
+        if(err){
+            console.log('问题插入失败');
+            res.send({
+                status: 'fail',
+                msg: '申请失败'
+            });
+        }else {
+            console.log('问题插入成功');
+            res.send({
+                status: 'success',
+                msg: '请等待审核'
+            });
+        }
+    })
 })
 server.use('/community',comRouter);
 
