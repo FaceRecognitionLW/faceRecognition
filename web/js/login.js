@@ -129,7 +129,7 @@
                                         oStipInfo.innerHTML = '登录成功';
                                         window.location.href = 'home.html';
                                     }else {
-                                        oStipInfo.innerHTML = '未匹配到人脸，请重试';
+                                        oStipInfo.innerHTML = res.msg;
                                         oStartBtn.disabled = false;
                                     }
                                 },

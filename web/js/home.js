@@ -27,6 +27,8 @@
         this.handleComDetail();
         // 渲染社群管理界面信息
         this.getAdminComInfo();
+        // 社群搜索结果事件委托
+        this.handleSearchCom();
     }
     Object.defineProperty(Home.prototype,'constructor',{
         enumerable: false,
@@ -146,6 +148,9 @@
             };
             oSearchInput.onchange = function(){
                 oSearchResult.style.transform = 'scale(1)';
+                // 向服务器查询并渲染
+                console.log(this.value);
+                Home.prototype.getComInName(this.value);
             };
         },
         // header部分menu事件委托
@@ -186,7 +191,10 @@
                             oPublishSignQuick.style.transform = 'scale(1)';
                             this.style.transform = 'scale(0)';
                             checkHeaderMenuStyle(target,oHeaderMenuLis);
-                            // target.classList.add("menuHighLight");
+                            //  向服务器拉去社群信息
+                            Home.prototype.getCreatedCom(function(data){
+                                // 暂时先不写（发布签到的快捷方式）
+                            })
                             break;
                         // 创建社群信息
                         case 'iconfont icon-tianjia':
@@ -655,6 +663,79 @@
                 }
             }
         },
+        // 社群搜索结果事件委托
+        handleSearchCom: function(){
+            var oSearchBox = doc.getElementById('search-com'),
+                oAnswerBox = doc.getElementById('answer-question'),
+                oAnswerUl = doc.querySelector('#answer-question ul');
+            oSearchBox.ontouchstart = function(e){
+                e = e||window.e;
+                var target = e.target||e.srcElement;
+                console.log(target);
+                if(target.className =='join') {
+                    oAnswerBox.style.transform = 'scale(1)';
+                    oAnswerUl.innerHTML = '';
+                    // 请求问题
+                    ajax({
+                        url: '/community/getQueToCom',
+                        method: 'get',
+                        data: {
+                            comId: target.parentNode.getAttribute('comId')
+                        },
+                        contentType: 'application/json',
+                        success: function(res){
+                            res = JSON.parse(res);
+                            console.log(res);
+                            var data = res.data;
+                            var frag = doc.createDocumentFragment();
+                            // 渲染问题
+                            if(data.length>0){
+                                for(var i=0,len=data.length;i<len;i++){
+                                    var item = doc.createElement('li');
+                                    item.setAttribute('questionId',data[i].questionId);
+                                    item.innerHTML = '<p><i class="iconfont icon-fanshe"></i>'+data[i].question+'</p><input type="text" name="addr">';
+                                    frag.appendChild(item);
+                                }
+                                oAnswerUl.appendChild(frag);
+                            }
+                            // 事件委托点击加入
+                        },
+                        fail: function(err){
+                            console.log('err: '+err);
+                        }
+                    })
+                }
+            };
+            oAnswerBox.ontouchstart = function(e){
+                e = e||window.e;
+                var target = e.target||e.srcElement;
+                switch(target.className){
+                    case 'iconfont icon-guanbi close':
+                        oAnswerBox.style.transform = 'scale(0)';
+                        break;
+                    case 'reset':
+                        oAnswerBox.style.transform = 'scale(0)';
+                        break;
+                    case 'submit':
+                        // 发送请求
+                        ajax({
+                            url: '/community/reqToIntoCom',
+                            method: 'post',
+                            data: {
+
+                            },
+                            contentType: 'application/json',
+                            success: function(res){
+                                console.log(res);
+                            },
+                            fail: function(err){
+                                console.log('err: '+err);
+                            }
+                        })
+                        break;
+                }
+            }
+        },
         // 拉取‘社群管理界面’信息请求
         getAdminComInfo: function(){
             ajax({
@@ -716,6 +797,46 @@
                 }
             })
         },
+        // 查询该用户创建的社群
+        getCreatedCom: function(callback){
+            ajax({
+                url: '/community/getComs',
+                method: 'get',
+                contentType: 'application/x-www-form-urlendcoded',
+                success: function(res) {
+                    res = JSON.parse(res);
+                    console.log(res);
+                    callback&&callback(res.data);
+                },
+                fail: function(err) {
+                    console.log('err: '+err);
+                    handleStipInfo(res.msg+',请稍候重试');
+                }
+            })
+        },
+        // 按照社群名搜索社群
+        getComInName: function(comName){
+            ajax({
+                url: '/community/getComInName',
+                method: 'get',
+                data: {
+                    comName: comName
+                },
+                contentType: 'application/json',
+                success: function(res){
+                    res = JSON.parse(res);
+                    console.log(res);
+                    if(res.data.length==0){
+                        handleStipInfo('未搜索到结果');
+                    }else {
+                        Home.prototype.renderSearchedCom(res.data);
+                    }
+                },
+                fail: function(err){
+                    console.log('err: '+err);
+                }
+            })
+        },
         // 渲染'社群管理界面'信息
         renderAdminComInfo: function(data){
             var oBox = doc.querySelector('#admin-com ul');
@@ -724,6 +845,19 @@
                 var item = doc.createElement('li');
                 item.setAttribute('comId',data[i].comId);
                 item.innerHTML = '<div class="img"><img src="./'+data[i].comImg+'" alt="img"></div><div class="info"><p>'+data[i].comName+'</p><p><i class="iconfont icon-icon_zhanghao"></i>'+data[i].userName+'</p><p><i class="iconfont icon-qunzutianchong"></i>总人数</p><p><i class="iconfont icon-get"></i><a href=":void(0)">历史签到信息</a></p></div><button class="publish-sign">发布签到</button><i class="iconfont icon-shanchutianchong"></i>';
+                frag.appendChild(item);
+            }
+            oBox.appendChild(frag);
+        },
+        // 渲染搜索到的社群
+        renderSearchedCom: function(data){
+            var oBox = doc.querySelector('#search-com ul');
+            var frag = doc.createDocumentFragment();
+            oBox.innerHTML = '';
+            for(var i=0,len=data.length;i<len;i++){
+                var item = doc.createElement('li');
+                item.setAttribute('comId',data[i].comId);
+                item.innerHTML = '<div class="img"><img src="./'+data[i].comImg+'" alt="img"></div><div class="info"><p>'+data[i].comName+'</p><p><i class="iconfont icon-ditu-dibiao"></i><span>信息院</span></p><p><i class="iconfont icon-icon_zhanghao"></i><span>'+data[i].userName+'</span></p><p><i class="iconfont icon-ditu-huan"></i><time class="start">'+data[i].comCreateTime+'</time></p></div><i class="join">+</i>';
                 frag.appendChild(item);
             }
             oBox.appendChild(frag);

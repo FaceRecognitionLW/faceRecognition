@@ -429,7 +429,8 @@ footer ul li i.iconfont {
   text-align: center;
 }
 #publish-sign-quick,
-#pushlish-sign {
+#pushlish-sign,
+#answer-question {
   box-sizing: border-box;
   position: absolute;
   top: 2.4rem;
@@ -445,17 +446,20 @@ footer ul li i.iconfont {
   transition-duration: .3s;
 }
 #publish-sign-quick p,
-#pushlish-sign p {
+#pushlish-sign p,
+#answer-question p {
   color: #999999;
   margin: .6rem auto;
 }
 #publish-sign-quick p:last-child,
-#pushlish-sign p:last-child {
+#pushlish-sign p:last-child,
+#answer-question p:last-child {
   text-align: center;
 }
 #publish-sign-quick input,
 #publish-sign-quick select,
-#pushlish-sign input {
+#pushlish-sign input,
+#answer-question input {
   width: 100%;
   height: 2rem;
   outline: none;
@@ -489,21 +493,25 @@ footer ul li i.iconfont {
   background-color: #f87a58;
 }
 #publish-sign-quick input:focus,
-#pushlish-sign input:focus {
+#pushlish-sign input:focus,
+#answer-question input:focus {
   box-shadow: 0 0 0.3rem #9bca3e inset;
 }
 #publish-sign-quick button,
-#pushlish-sign button {
+#pushlish-sign button,
+#answer-question button {
   position: static;
 }
 #publish-sign-quick i,
-#pushlish-sign i {
+#pushlish-sign i,
+#answer-question i {
   margin-right: .4rem;
   color: #9bca3e;
   font-size: 1rem;
 }
 #publish-sign-quick .close,
-#pushlish-sign .close {
+#pushlish-sign .close,
+#answer-question .close {
   position: absolute;
   top: .1rem;
   right: .1rem;
@@ -973,6 +981,13 @@ footer ul li i.iconfont {
   font-size: 1.8rem;
   text-align: center;
   line-height: 2rem;
+}
+#answer-question {
+  transform: scale(0);
+  font-size: .8rem;
+}
+#answer-question li {
+  font-size: .8rem;
 }
 #stipInfoBox {
   z-index: 100;

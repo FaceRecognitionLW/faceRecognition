@@ -205,6 +205,10 @@ userRouter.post('/login',function(req,res){
         fail: function(err){    
             console.log('人脸搜索失败');
             console.log(err);
+            res.send({
+                status: 'fail',
+                msg: '没有匹配到人脸，请先注册'
+            });
         }
     })
 });
@@ -221,8 +225,8 @@ userRouter.post('/regist',function(req,res){
         // 先判断人脸库中是否存在该人脸
         FACESEARCH(client,REQINFO.faceImg,{
             success: function(data) {
-                console.log('该人脸已经注册过');
                 if(data.error_msg=="SUCCESS"){
+                    console.log('该人脸已经注册过'); 
                     res.send({
                         status: 'fail',
                         msg: '您已经注册过，请直接登录'
@@ -247,16 +251,17 @@ userRouter.post('/regist',function(req,res){
         console.log(userId);
         // 保存userId信息
         let insertFaceSql = 'INSERT INTO user(userId,groupId) values("'+userId+'","'+groupId+'");';
-        HANDLESQL(CONN,insertFaceSql,function(err,data){
-            console.log('数据库人脸信息入驻成功');
-            console.log(data);
+        HANDLESQL(CONN,insertFaceSql,function(data,err){
             if(err){
                 console.log('数据库人脸信息入驻失败:'+err.sqlMessage);
+            }else {
+                console.log('数据库人脸信息入驻成功');
+                console.log(data);
             }
         });
         return {
             userId: userId,
-            groupdId: groupdId
+            groupId: groupId
         };
     })
     .then(data => {
@@ -397,6 +402,7 @@ comRouter.post('/createCom',function(req,res){
 comRouter.get('/:id',function(req,res){
     let reqId = req.params.id;
     let USERID = req.cookies["user"];
+    console.log(USERID);
     switch(reqId) {
         // 拉取该用户创建的所有社群
         case 'getCreatedCom':
@@ -411,6 +417,7 @@ comRouter.get('/:id',function(req,res){
                     });
                 }else {
                     console.log('社群信息拉取成功');
+                    console.log(data);
                     res.send({
                         status: 'success',
                         data: data
@@ -422,9 +429,75 @@ comRouter.get('/:id',function(req,res){
         case 'delCreatedCom':
             
             break;
+        // 获取社群信息
+        case 'getComs':
+            let getComsSql = 'SELECT comId,comName FROM community where createUserId="'+USERID+'";';
+            HANDLESQL(CONN,getComsSql,function(data,err){
+                if(err){
+                    console.log('社群查询失败');
+                    res.send({
+                        status: 'fail',
+                        msg: '社群查询失败'
+                    });
+                }else {
+                    console.log('社群查询成功');
+                    res.send({
+                        status: 'success',
+                        data: data
+                    });
+                }
+            });
+            break;
+        case 'getComInName':
+            console.log('getComInName');
+            console.log(req.query);
+            let comName = req.query.comName;
+            console.log(comName);
+            let getComInNameSql = 'SELECT community.*,user.userName FROM community,user where comName like "%'+comName+'%" and community.createUserId=user.userId;';
+            HANDLESQL(CONN,getComInNameSql,function(data,err){
+                if(err){
+                    console.log('查找社群失败');
+                    res.send({
+                        status: 'fail',
+                        msg: '查询失败'
+                    });
+                }else {
+                    console.log(data);
+                    for(var i=0,len=data.length;i<len;i++){
+                        data[i].comCreateTime=moment(data[i].comCreateTime).format('YYYY-MM-DD HH:mm:ss');
+                    }
+                    res.send({
+                        status: 'success',
+                        data: data
+                    });
+                }
+            });
+            break;
+        // 获取进入社群的问题
+        case 'getQueToCom':
+            console.log('getQueToCom');
+            console.log(req.query);
+            let getQueToComSql = 'SELECT questionId,question FROM com_question where comId="'+req.query.comId+'";';
+            HANDLESQL(CONN,getQueToComSql,function(data,err){
+                if(err){
+                    console.log('进群问题查询失败');
+                    res.send({
+                        status: 'fail',
+                        msg: '进群问题查询失败'
+                    });
+                }else {
+                    console.log(data);
+                    res.send({
+                        status: 'success',
+                        data: data
+                    });
+                }
+            })
+            break;
     }
     
 })
+// 发布签到
 comRouter.post('/publishSign',function(req,res){
     console.log(req.body);
     let reqInfo = {
@@ -453,6 +526,11 @@ comRouter.post('/publishSign',function(req,res){
             });
         }
     });
+})
+// 回答问题申请进入社群
+comRouter.post('/reqToIntoCom',function(req,res){
+    console.log('reqToIntoCom');
+    console.log(req.body);
 })
 server.use('/community',comRouter);
 
