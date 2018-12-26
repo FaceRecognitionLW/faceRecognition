@@ -228,26 +228,31 @@ section {
 #publish-history,
 #publish-history li:not(:nth-child(1)), 
 #search-com,
-#search-com li:not(:nth-child(1)){
+#search-com li:not(:nth-child(1))，
+#notice-box,
+#notice-box li:not(:nth-child(1)){
     width: 100%;
     margin-top: 1rem;
 }
 #ckeck-info li,
 #sign-in-history li,
 #publish-history li, 
-#search-com li{
+#search-com li,
+#notice-box li {
     position: relative;
 }
 #ckeck-info ul,
 #sign-in-history ul,
 #publish-history ul,
-#search-com ul {
+#search-com ul,
+#notice-box ul {
     font-size: 0;
 }
 #ckeck-info li div,
 #sign-in-history li div,
 #publish-history li div,
-#search-com li div {
+#search-com li div,
+#notice-box li div {
     display: inline-block;
     vertical-align: middle;
     font-size: .8rem;
@@ -255,14 +260,16 @@ section {
 #ckeck-info li .img,
 #sign-in-history li .img,
 #publish-history li .img,
-#search-com li .img {
+#search-com li .img,
+#notice-box li .img{
     width: 5rem;
     height: 5rem;
 }
 #ckeck-info li .info,
 #sign-in-history li .info,
 #publish-history li .info,
-#search-com li .info { 
+#search-com li .info,
+#notice-box li .info{ 
     width: calc(100% - 5)rem;
     height: 100%;
     border-bottom: 1px solid #ccc;
@@ -270,7 +277,7 @@ section {
 #ckeck-info li .signIn,
 #sign-in-history li .signIn,
 #publish-history li .signInfo,
-#search-com li .signInfo {
+#search-com li .signInfo{
     position: absolute;
     top: 0;
     bottom: 0;
@@ -300,25 +307,29 @@ section {
 #ckeck-info li .info p,
 #sign-in-history li .info p,
 #publish-history li .info p,
-#search-com li .info p {
+#search-com li .info p,
+#notice-box li .info p {
     line-height: 1.6rem;
 }
 #ckeck-info li .info i,
 #sign-in-history li .info i,
 #publish-history li .info i,
-#search-com li .info i {
+#search-com li .info i,
+#notice-box li .info i {
     margin-right: .4rem;
 }
 #ckeck-info li .info p:not(:nth-child(1)),
 #sign-in-history li .info p:not(:nth-child(1)),
 #publish-history li .info p:not(:nth-child(1)),
-#search-com li .info p:not(:nth-child(1)) {
+#search-com li .info p:not(:nth-child(1)),
+#notice-box li .info p:not(:nth-child(1)) {
     color: #666;
 }
 #ckeck-info li .img img,
 #sign-in-history li .img img,
 #publish-history li .img img,
-#search-com li .img img {
+#search-com li .img img,
+#notice-box li .img img {
     width: 100%;
     height: 100%;
 }
@@ -344,7 +355,7 @@ footer ul {
 footer ul li{
     box-sizing: border-box;
     display: inline-block;
-    width: calc(100% / 4);
+    width: calc(100% / 5);
     height: 100%;
     color: @footerColor;
     font-size: .5rem;
@@ -452,7 +463,8 @@ footer ul li i.iconfont {
 // 发布签到信息
 #publish-sign-quick,
 #pushlish-sign,
-#answer-question {
+#answer-question,
+#see-question {
     box-sizing: border-box;
     position: absolute;
     top: 2.4rem;
@@ -469,19 +481,22 @@ footer ul li i.iconfont {
 }
 #publish-sign-quick p,
 #pushlish-sign p,
-#answer-question p {
+#answer-question p,
+#see-question p {
     color: rgb(153,153,153);
     margin: .6rem auto;
 }
 #publish-sign-quick p:last-child,
 #pushlish-sign p:last-child,
-#answer-question p:last-child {
+#answer-question p:last-child ,
+#see-question p:last-child {
     text-align: center;
 }
 #publish-sign-quick input,
 #publish-sign-quick select,
 #pushlish-sign input,
-#answer-question input {
+#answer-question input,
+#see-question input {
     width: 100%;
     height: 2rem;
     outline: none;
@@ -516,24 +531,28 @@ footer ul li i.iconfont {
 }
 #publish-sign-quick input:focus,
 #pushlish-sign input:focus,
-#answer-question input:focus {
+#answer-question input:focus,
+#see-question input:focus {
     box-shadow: 0 0 .3rem @youngColor inset;
 }
 #publish-sign-quick button,
 #pushlish-sign button,
-#answer-question button {
+#answer-question button,
+#see-question button {
     position: static;
 }
 #publish-sign-quick i,
 #pushlish-sign i,
-#answer-question i {
+#answer-question i,
+#see-question i{
     margin-right: .4rem;
     color: @youngColor;
     font-size: 1rem;
 }
 #publish-sign-quick .close,
 #pushlish-sign .close,
-#answer-question .close {
+#answer-question .close,
+#see-question .close{
     position: absolute;
     top: .1rem;
     right: .1rem;
@@ -1046,4 +1065,108 @@ footer ul li i.iconfont {
 }
 .handleStipInfo-show {
     transform: scale(1);
+}
+// 通知页面
+#notice-box,
+#face-sign-in {
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding-top: @headerHeight;
+    padding-bottom: @footerHeight;
+    background-color: @pageBg;
+    transform: scale(0);
+    transition-duration: .3s;
+}
+#notice-box ul {
+    padding-bottom: @footerHeight;
+}
+#notice-box li {
+    position: relative;
+}
+#notice-box li .join {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 4rem;
+    height: 2rem;
+    margin: auto;
+    outline: none;
+    border: none;
+    border-radius: 2rem;
+    background-color: @youngColor;
+    color: #fff;
+    font-size: .8rem;
+    text-align: center;
+    line-height: 2rem;
+    transition-duration: .2s;
+}
+#notice-box li .join:focus {
+    background-color: @footerBgColor;
+}
+#see-question {
+    transform: scale(0);
+}
+#see-question li {
+    font-size: .8rem;
+}
+// 刷脸签到
+#face-sign-in {
+    transform: scale(1);
+}
+#process {
+    margin-top: 1rem;
+    text-align: center;
+}
+#process span{
+    display: inline-block;
+    vertical-align: middle;
+}
+#process .circle {
+    position: relative;
+    width: .5rem;
+    height: .5rem;
+    border-radius: 50%;
+    border: .2rem solid rgba(255,255,255,.5);
+    background-color: #f00;
+}
+#process span:nth-child(1)::before {
+    content: '人脸识别';
+    position: absolute;
+    left: -2rem;
+    top: 1rem;
+    width: 5rem;
+    height: 1rem;
+    color: #999;
+    font-size: .6rem;
+}
+#process span:nth-child(3)::after {
+    content: '定位';
+    position: absolute;
+    left: -2.2rem;
+    top: 1rem;
+    width: 5rem;
+    height: 1rem;
+    color: #999;
+    font-size: .6rem;
+}
+#process span:nth-child(5)::after {
+    content: '签到成功';
+    position: absolute;
+    left: -2.2rem;
+    top: 1rem;
+    width: 5rem;
+    height: 1rem;
+    color: #999;
+    font-size: .6rem;
+}
+#process .line {
+    width: 6rem;
+    height: .2rem;
+    border-radius: 1rem;
+    background-color: #ccc;
 }

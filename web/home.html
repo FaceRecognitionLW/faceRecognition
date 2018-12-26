@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="./css/commonCss/style.css">
     <link rel="stylesheet" href="./css/commonCss/iconfont.css">
     <link rel="stylesheet" href="./css/home.css">
+    <link rel="stylesheet" href="./css/login.css">
     <link rel="shortcut icon" href="./images/logo.ico">
     <title>刷脸签到-首页</title>
 </head>
@@ -139,19 +140,23 @@
             <ul>
                 <li class="signIn">
                     <i class="iconfont icon-ditu-tuding"></i>
-                    <p>签到</p>
+                    <p>社群</p>
                 </li>
                 <li class="sign-in-history">
                     <i class="iconfont icon-get"></i>
-                    <p>签到历史</p>
+                    <p>签到信息</p>
                 </li>
                 <li class="publish-history">
                     <i class="iconfont icon-icon_fabu"></i>
-                    <p>发布历史</p>
+                    <p>发布信息</p>
                 </li>
                 <li class="menage">
                     <i class="iconfont icon-zuzhiqunzu"></i>
                     <p>管理社群</p>
+                </li>
+                <li class="notice">
+                    <i class="iconfont icon-tixingtianchong"></i>
+                    <p>通知</p>
                 </li>
             </ul>
         </footer>
@@ -500,6 +505,52 @@
             </div>
         </div>
         <!-- 正式签到 -->
+        <div id="face-sign-in">
+            <div id="process">
+                <span class="circle"></span>
+                <span class="line"></span>
+                <span class="circle"></span>
+                <span class="line"></span>
+                <span class="circle"></span>
+            </div>
+            <section>
+                <strong id="info">请将脸部对准摄像头</strong>
+                <div id="face">
+                    <canvas id="canvas"></canvas>
+                    <video id="video"></video>
+                    <div id="faceAnimation">
+                        <img src="./images/faceAnimation3.png" alt="img">
+                    </div>
+                </div>
+                <button id="clickPhoto">开始识别人脸</button>
+            </section>
+        </div>
+        <!-- 通知 -->
+        <div id="notice-box">
+            <ul>
+                <!-- <li>
+                    <div class="img">
+                        <img src="./images/com/1.png" alt="img">
+                    </div>
+                    <div class="info">
+                        <p>刘琼 <span>申请加入</span></p>
+                        <p><i class="iconfont icon-ditu-dibiao"></i><span>数媒1501班社群</span></p>
+                        <p><i class="iconfont icon-ditu-qipao"></i><span class="see-info" style="color:#aaa;text-decoration:underline">查看信息</span></p>
+                    </div>
+                    <button class="join">同意</button>
+                </li> -->
+            </ul>
+            <div id="see-question">
+                <i class="iconfont icon-guanbi close"></i>
+                <ul>
+                    <!-- <li>
+                        <p><i class="iconfont icon-fanshe"></i>问题</p>
+                        <input type="text" name="addr" disabled=true>  
+                    </li> -->
+                </ul>
+                <p><button class="reset" type="reset">拒绝</button><button class="submit">同意</button></p>
+            </div>
+        </div>
         <!-- 提示框 -->
         <div id="stipInfoBox">
             提示框

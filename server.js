@@ -175,8 +175,50 @@ userRouter.post('/onlineVivoDetection',function(req,res){
     //     // res: ''
     // })
 });
+// 人脸签到之人脸识别
+userRouter.post('/faceSignMatch',function(req,res){
+    let faceImg = req.body.faceImg;
+    let USERID = req.cookies['user'];
+    // 对两张人脸进行匹配
+    let getAimFaceFileSql = 'SELECT userFace FROM user where userId="'+USERID+'";';
+    HANDLESQL(CONN,getAimFaceFileSql,function(data,err){
+        if(err){
+            console.log('数据库相似人脸搜寻出错');
+        }else {
+            console.log('数据库相似人脸搜寻成功');
+            console.log(data);
+            let likeFaceFile = data[0].userFace;
+            // 对两张人脸进行匹配
+            client.match([{
+                image: faceImg,
+                image_type: 'BASE64'
+            },{
+                image: new Buffer(fs.readFileSync('./web/'+likeFaceFile)).toString('base64'),
+                image_type: 'BASE64'
+            }]).then(function (result) {
+                console.log('<match>: ' + JSON.stringify(result));
+                let matchScore = result.result.score
+                console.log('人脸匹配度为：'+matchScore);
+                if(matchScore>90){
+                    console.log('是同一张脸');
+                    res.send({
+                        status: 'success',
+                        msg: '人脸验证成功'
+                    });
+                }else {
+                    console.log('人脸相似度不足90%');
+                    res.send({
+                        status: 'fail',
+                        msg: '人脸验证失败'
+                    });
+                }
+            });
+        }
+    })
+})
 userRouter.post('/login',function(req,res){
     console.log('login');
+    // 人脸图像
     let faceImg = req.body.faceImg;
     // 执行人脸搜索
     FACESEARCH(client,faceImg,{
@@ -186,14 +228,46 @@ userRouter.post('/login',function(req,res){
             console.log(data.result);
             let userId = data.result.user_list[0].user_id;
             console.log('用户id:'+ userId);
-            // 搜索成功， 存在该用户
+            // 搜索最相似的人脸进行验证
             if(data.error_code== 0 ){
-                // 使用cookie保存用户信息
-                res.cookie('user',userId);
-                res.send({
-                    status: 'success',
-                    msg: '登录成功'
-                });
+                //对比一下这两张人脸
+                let getAimFaceFileSql = 'SELECT userFace FROM user where userId="'+userId+'";';
+                HANDLESQL(CONN,getAimFaceFileSql,function(data,err){
+                    if(err){
+                        console.log('数据库相似人脸搜寻出错');
+                    }else {
+                        console.log('数据库相似人脸搜寻成功');
+                        console.log(data);
+                        let likeFaceFile = data[0].userFace;
+                        // 对两张人脸进行匹配
+                        client.match([{
+                            image: faceImg,
+                            image_type: 'BASE64'
+                        },{
+                            image: new Buffer(fs.readFileSync('./web/'+likeFaceFile)).toString('base64'),
+                            image_type: 'BASE64'
+                        }]).then(function (result) {
+                            console.log('<match>: ' + JSON.stringify(result));
+                            let matchScore = result.result.score
+                            console.log('人脸匹配度为：'+matchScore);
+                            if(matchScore>90){
+                                console.log('是同一张脸');
+                                // 使用cookie保存用户信息
+                                res.cookie('user',userId);   
+                                res.send({
+                                    status: 'success',
+                                    msg: '登录成功'
+                                });
+                            }else {
+                                console.log('登录失败');
+                                res.send({
+                                    status: 'success',
+                                    msg: '登录成功'
+                                });
+                            }
+                        });
+                    }
+                })
             }else {
                 // 搜索失败，不存在该用户
                 res.send({
@@ -217,6 +291,7 @@ userRouter.post('/regist',function(req,res){
     let REQINFO = '';
     let resStatus = '';
     let resMsg = '';
+    let USERID = '';
     console.log('req.body');
     // console.log(req.body.tel);
     REQINFO = req.body;
@@ -225,12 +300,42 @@ userRouter.post('/regist',function(req,res){
         // 先判断人脸库中是否存在该人脸
         FACESEARCH(client,REQINFO.faceImg,{
             success: function(data) {
+                console.log(data);
+                console.log(data.result.user_list);
+                USERID = data.result.user_list[0].user_id;
+                console.log(USERID);
                 if(data.error_msg=="SUCCESS"){
-                    console.log('该人脸已经注册过'); 
-                    res.send({
-                        status: 'fail',
-                        msg: '您已经注册过，请直接登录'
-                    });
+                    // 再将两张人脸进行比对
+                    console.log('搜索到一张最相似的人脸，接下来判断它们是否为同一个人');
+                    let getAimFaceFileSql = 'SELECT userFace FROM user where userId="'+USERID+'";';
+                    HANDLESQL(CONN,getAimFaceFileSql,function(data,err){
+                        if(err){
+                            console.log('数据库相似人脸搜寻出错');
+                        }else {
+                            console.log('数据库相似人脸搜寻成功');
+                            console.log(data);
+                            let likeFaceFile = data[0].userFace;
+                            // MATCHFACE(client,REQINFO.faceImg,likeFaceFile);
+                            client.match([{
+                                image: REQINFO.faceImg,
+                                image_type: 'BASE64'
+                            },{
+                                image: new Buffer(fs.readFileSync('./web/'+likeFaceFile)).toString('base64'),
+                                image_type: 'BASE64'
+                            }]).then(function (result) {
+                                console.log('<match>: ' + JSON.stringify(result));
+                                let matchScore = result.result.score
+                                console.log('人脸匹配度为：'+matchScore);
+                                if(matchScore>90){
+                                    console.log('是同一张脸');
+                                    res.send({
+                                        status: 'fail',
+                                        msg: '已经注册过，请直接登录'
+                                    });
+                                }
+                            });
+                        }
+                    })
                 }else {
                     resolve();
                 }
@@ -245,28 +350,49 @@ userRouter.post('/regist',function(req,res){
     })
     .then(data => {
         console.log('没有注册过');
-        let groupdId,userId;
-        groupId = 'group1';
-        userId = CREATEUSERID();
-        console.log(userId);
-        // 保存userId信息
-        let insertFaceSql = 'INSERT INTO user(userId,groupId) values("'+userId+'","'+groupId+'");';
-        HANDLESQL(CONN,insertFaceSql,function(data,err){
+        console.log('将人脸写入文件');
+        // 将人脸图片写入文件
+        let dataBuffer = new Buffer(REQINFO.faceImg,'base64');
+        let fileName = 'images/user/'+CREATEHEADIMG()+'.png';
+        console.log(fileName);
+        fs.writeFile('./web/'+fileName,dataBuffer,function(err){
             if(err){
-                console.log('数据库人脸信息入驻失败:'+err.sqlMessage);
+                console.log('人脸存储文件失败');
+                res.send({
+                    status: 'fail',
+                    msg: '人脸存储失败'
+                });
             }else {
-                console.log('数据库人脸信息入驻成功');
-                console.log(data);
+                console.log('人脸存储文件成功');
+                console.log('将信息入驻数据库');
+                console.log(fileName);
+                let groupdId,userId;
+                groupId = 'group1';
+                userId = CREATEUSERID();
+                console.log(userId);
+                let insertFaceSql = 'INSERT INTO user(userId,groupId,userFace) values("'+userId+'","'+groupId+'","'+fileName+'");';
+                HANDLESQL(CONN,insertFaceSql,function(data,err){
+                    if(err){
+                        console.log('数据库人脸信息入驻失败:'+err.sqlMessage);
+                    }else {
+                        console.log('数据库人脸信息入驻成功');
+                        console.log(data);
+                        return {
+                            userId: userId,
+                            groupId: groupId
+                        };
+                    }
+                });
             }
-        });
-        return {
-            userId: userId,
-            groupId: groupId
-        };
+        })
     })
     .then(data => {
+        console.log('百度AI入驻人脸');
+        console.log(data.userId);
+        console.log(data.groupId);
         // 注册人脸
         FACEREGIST(client,REQINFO.faceImg,data.groupId,data.userId);
+        // cookie存储userId
         res.cookie('user',data.userId);
     })
     .then(data => {
@@ -289,8 +415,10 @@ userRouter.post('/completeInfo',function(req,res){
     let USERID = req.cookies["user"];
     console.log(USERID);
     console.log(name);
+
     new Promise((resolve,reject) => {
-        fs.writeFile('./web/images/user/'+CREATEHEADIMG()+fileSuffix,dataBuffer,function(err){
+        let fileName = 'images/user/'+CREATEHEADIMG()+fileSuffix;
+        fs.writeFile('./web/'+fileName,dataBuffer,function(err){
             if(err){
                 res.send({
                     status: 'fail',
@@ -298,7 +426,6 @@ userRouter.post('/completeInfo',function(req,res){
                 });
             }else {
                 console.log('头像存储成功');
-                let fileName = "images/user/"+CREATEHEADIMG()+fileSuffix;
                 resolve(fileName);
             }
         });
@@ -359,38 +486,41 @@ comRouter.post('/createCom',function(req,res){
     .then(data =>{
         // 插入community表格
         let insertComSql = 'INSERT into community(createUserId,comName,comImg) values("'+USERID+'","'+comName+'","'+data+'");';
-        HANDLESQL(CONN,insertComSql,function(data,err){
-            if(err){
-                console.log('插入community失败');
-            }else {
-                console.log('插入community成功');
-                console.log(data);
-                console.log(data.insertId);
-                // 将问题插入con_question表格
-                let insertItem = '';
-                for(var i=0,len=questions.length;i<len;i++){
-                    insertItem+='('+data.insertId+','+'"'+questions[i]+'"),';
-                }
-                insertItem = insertItem.substr(0,insertItem.length-1);
-                console.log(insertItem);
-                let insertComQue = 'INSERT INTO com_question(comId,question) values'+insertItem;
-                HANDLESQL(CONN,insertComQue,function(data,err){
-                    if(err){
-                        console.log('插入com_question失败');
-                        res.send({
-                            status: 'fail',
-                            msg: '创建社群失败'
-                        });
-                    }else {
-                        console.log('插入com_question成功');
-                        res.send({
-                            status: 'success',
-                            msg: '创建社群成功'
-                        });
+        new Promise((resolve,reject)=>{
+            HANDLESQL(CONN,insertComSql,function(data,err){
+                if(err){
+                    console.log('插入community失败');
+                }else {
+                    console.log('插入community成功');
+                    console.log(data);
+                    console.log(data.insertId);
+                    // resolve(data.insertId)
+                    // return data.insertId;
+                    // 将问题插入con_question表格
+                    console.log('将问题插入con_question表格');
+                    let insertItem = '';
+                    let comId = data.insertId;
+                    for(var i=0,len=questions.length;i<len;i++){
+                        insertItem+='('+comId+','+'"'+questions[i]+'"),';
                     }
-                })
-            }
-        });
+                    insertItem = insertItem.substr(0,insertItem.length-1);
+                    console.log(insertItem);
+                    let insertComQue = 'INSERT INTO com_question(comId,question) values'+insertItem;
+                    HANDLESQL(CONN,insertComQue,function(data,err){
+                        if(err){
+                            console.log('插入com_question失败');
+                            res.send({
+                                status: 'fail',
+                                msg: '创建社群失败'
+                            });
+                        }else {
+                            console.log('插入com_question成功');
+                            
+                        }
+                    })
+                }
+            });
+        })
     })
     .catch(err => {
         res.send({
@@ -448,6 +578,7 @@ comRouter.get('/:id',function(req,res){
                 }
             });
             break;
+        // 根据社群名搜索社群
         case 'getComInName':
             console.log('getComInName');
             console.log(req.query);
@@ -493,6 +624,109 @@ comRouter.get('/:id',function(req,res){
                     });
                 }
             })
+            break;
+        // 获取想要进如我的社群的成员
+        case 'getWannerIntoMyCom':
+            console.log('getWannerIntoMyCom');
+            new Promise((resolve,reject) => {
+                console.log('根据userId找到该用户创建的所有com');
+                let findUserAnswerSql = 'SELECT com_answer.userId,user.userName,user.userImg,community.comId,community.comName FROM com_answer,user,community,com_question where community.comId=com_question.comId and com_question.questionId=com_answer.questionId and com_answer.userId=user.userId and community.createUserId="'+USERID+'";';
+                HANDLESQL(CONN,findUserAnswerSql,function(data,err){
+                    if(err){
+                        console.log('查询com失败');
+                    }else {
+                        console.log('查询com成功');
+                        console.log(data);
+                        resolve(data);
+                    }
+                })
+            })
+            .then(data => {
+                res.send({
+                    status: 'success',
+                    data: data
+                });
+            })
+            .catch(err => {
+                console.log('查询失败');
+                res.send({
+                    status: 'fail',
+                    msg: '查询失败'
+                });
+            })
+            break;
+        // 查找某个用户进入社群回答的信息
+        case 'getComQuestionForUser':
+            console.log(req.query);
+            let getComQuestionForUserSql = 'SELECT com_question.question,com_answer.answer FROM com_question,com_answer where com_question.questionId=com_answer.questionId and com_question.comId='+req.query.wannerInComId+' and com_answer.userId="'+req.query.userId+'";';
+            HANDLESQL(CONN,getComQuestionForUserSql,function(data,err){
+                if(err){
+                    console.log('回答查找失败');
+                    res.send({
+                        status: 'fail',
+                        msg: '查找失败'
+                    });
+                }else {
+                    console.log('查找成功');
+                    console.log(data);
+                    res.send({
+                        status:'success',
+                        data: data
+                    })
+                }
+            });
+            break;
+        // 同意该成员进入社群
+        case 'agreeIntoCom':
+            console.log(req.query);
+            // 插入user_com表格
+            console.log('插入user_com表格');
+            console.log(req.query.wannerIntoComId);
+            let insertUserComSql = 'INSERT INTO user_com(userId,comId) values("'+req.query.userId+'",'+req.query.wannerIntoComId+');';
+            let delAnswerSql = 'DELETE FROM com_answer where questionId in(SELECT questionId FROM com_question where comId='+req.query.wannerIntoComId+');';
+            console.log(insertUserComSql);
+            console.log(delAnswerSql);
+            Promise.all([
+                // 插入user_com表格
+                HANDLESQL(CONN,insertUserComSql),
+                // 删除回答的问题
+                HANDLESQL(CONN,delAnswerSql)
+            ])
+            .then(data => {
+                res.send({
+                    status: 'success',
+                    msg: '进入社群成功'
+                });
+            })
+            .catch(err =>{
+                console.log('进入社群失败');
+                res.send({
+                    status: 'fail',
+                    msg: '进入社群失败'
+                });
+            })
+            break;
+        // 拒绝该成员进入社群
+        case 'refuseIntoCom':
+        let refuseIntoComSql = 'DELETE FROM com_answer where questionId in(SELECT questionId FROM com_question where comId='+req.query.wannerIntoComId+');';
+            HANDLESQL(CONN,refuseIntoComSql,function(data,err){
+                if(err){
+                    console.log('删除失败');
+                    res.send({
+                        status: 'fail',
+                        msg: '拒绝失败'
+                    });
+                }else {
+                    res.send({
+                        status: 'success',
+                        msg: '拒绝成功'
+                    });
+                }
+            });
+            console.log(req.query);
+            break;
+        case 'getJoinedCom':
+            let getJoinedComSql = 'SELECT '
             break;
     }
     

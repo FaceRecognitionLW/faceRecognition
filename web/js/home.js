@@ -29,6 +29,12 @@
         this.getAdminComInfo();
         // 社群搜索结果事件委托
         this.handleSearchCom();
+        // 查询想要加入我创建社群的成员
+        this.getWannerIntoMyCom();
+        // 通知界面事件委托
+        this.handleNotice();
+        // 人脸签到
+        // this.handleFaceSign();
     }
     Object.defineProperty(Home.prototype,'constructor',{
         enumerable: false,
@@ -129,7 +135,25 @@
                 oMenu = doc.getElementById('menu'),
                 oCircleMenu = doc.getElementById('circle-menu'),
                 oSearchInput = doc.querySelector('#search input'),
-                oSearchResult = doc.getElementById('search-com');
+                oSearchResult = doc.getElementById('search-com'),
+                // 快捷发布签到信息
+                oPublishSignQuick= doc.getElementById('publish-sign-quick'),
+                // 创建社群
+                oCreateCom = doc.getElementById('create-com'),
+                // 签到历史
+                oSignInHistory = doc.getElementById('sign-in-history'),
+                // 发布历史
+                oPublishHistory = doc.getElementById('publish-history'),
+                // 管理社群
+                oAdminCom = doc.getElementById('admin-com'),
+                // 社群详情
+                oComDetail = doc.getElementById('com-detail'),
+                // 搜索界面
+                oSearchCom = doc.getElementById('search-com'),
+                // 通知界面
+                oNotice = doc.getElementById('notice-box'),
+                // 刷脸人脸签到界面
+                oFaceSignIn = doc.getElementById('face-sign-in');
             oHeader.ontouchstart = function(e){
                 e = e||window.e;
                 var target = e.target||e.srcElement;
@@ -147,6 +171,16 @@
                 }
             };
             oSearchInput.onchange = function(){
+                oCreateCom.style.transform = 'scale(0)';
+                oSignInHistory.style.transform = 'scale(0)';
+                oPublishHistory.style.transform = 'scale(0)';
+                oAdminCom.style.transform = 'scale(0)';
+                oComDetail.style.transform = 'scale(0)';
+                oComDetail.style.transform = 'scale(0)';
+                oNotice.style.transform = 'scale(0)';
+                oFaceSignIn.style.transform = 'scale(0)';
+                oPublishSignQuick.style.transform = 'scale(0)';
+                // 重点
                 oSearchResult.style.transform = 'scale(1)';
                 // 向服务器查询并渲染
                 console.log(this.value);
@@ -169,7 +203,11 @@
                 // 社群详情
                 oComDetail = doc.getElementById('com-detail'),
                 // 搜索界面
-                oSearchCom = doc.getElementById('search-com');
+                oSearchCom = doc.getElementById('search-com'),
+                // 通知界面
+                oNotice = doc.getElementById('notice-box'),
+                // 刷脸签到界面
+                oFaceSignIn = doc.getElementById('face-sign-in'),
                 oHeaderMenuLis = doc.querySelectorAll('#menu li i'),
                 oFooterLis = doc.querySelectorAll('footer li');
             oMenu.ontouchstart = function(e){
@@ -187,6 +225,8 @@
                             oComDetail.style.transform = 'scale(0)';
                             oComDetail.style.transform = 'scale(0)';
                             oSearchCom.style.transform = 'scale(0)';
+                            oNotice.style.transform = 'scale(0)';
+                            oFaceSignIn.style.transform = 'scale(0)';
                             // 重点
                             oPublishSignQuick.style.transform = 'scale(1)';
                             this.style.transform = 'scale(0)';
@@ -204,6 +244,8 @@
                             oPublishSignQuick.style.transform = 'scale(0)';
                             oComDetail.style.transform = 'scale(0)';
                             oSearchCom.style.transform = 'scale(0)';
+                            oNotice.style.transform = 'scale(0)';
+                            oFaceSignIn.style.transform = 'scale(0)';
                             // 重点
                             oCreateCom.style.transform = 'scale(1)';
                             this.style.transform = 'scale(0)';
@@ -218,6 +260,8 @@
                             oCreateCom.style.transform = 'scale(0)';
                             oComDetail.style.transform = 'scale(0)';
                             oSearchCom.style.transform = 'scale(0)';
+                            oNotice.style.transform = 'scale(0)';
+                            oFaceSignIn.style.transform = 'scale(0)';
                             // 重点
                             oSignInHistory.style.transform = 'scale(1)';
                             this.style.transform = 'scale(0)';
@@ -233,6 +277,8 @@
                             oSignInHistory.style.transform = 'scale(0)';
                             oComDetail.style.transform = 'scale(0)';
                             oSearchCom.style.transform = 'scale(0)';
+                            oNotice.style.transform = 'scale(0)';
+                            oFaceSignIn.style.transform = 'scale(0)';
                             // 重点
                             oPublishHistory.style.transform = 'scale(1)';
                             this.style.transform = 'scale(0)';
@@ -248,6 +294,8 @@
                             oPublishHistory.style.transform = 'scale(0)';
                             oComDetail.style.transform = 'scale(0)';
                             oSearchCom.style.transform = 'scale(0)';
+                            oNotice.style.transform = 'scale(0)';
+                            oFaceSignIn.style.transform = 'scale(0)';
                             // 重点
                             oAdminCom.style.transform = 'scale(1)';
                             this.style.transform = 'scale(0)';
@@ -327,7 +375,6 @@
                 oLastLine = doc.querySelector('#create-com p:last-child'),
                 // 用来存放上传头像的base64
                 HEADIMG = '';
-            console.log(oLastLine);
             // 上传头像
             oFileIput.onchange = function(){
                 if(this.value){
@@ -444,7 +491,9 @@
         // 圆形菜单事件委托
         handleCircleMenuClick: function() {
             var oCircleMenu = doc.getElementById('circle-menu'),
-                oComDetail = doc.getElementById('com-detail');
+                oComDetail = doc.getElementById('com-detail'),
+                // 刷脸人脸签到界面
+                oFaceSignIn = doc.getElementById('face-sign-in');
             oCircleMenu.ontouchstart = function(e){
                 e = e||window.e;
                 var target = e.target||e.srcElement;
@@ -457,6 +506,8 @@
                     // 签到
                     case 'iconfont icon-ditu-qi':
                         target.classList.add('menuHighLight');
+                        oFaceSignIn.style.transform = 'scale(1)';
+                        this.style.transform = 'scale(0)';
                         break;
                     // 进入社群
                     case 'iconfont icon-fanshe':
@@ -467,6 +518,10 @@
                     // 删除
                     case 'iconfont icon-shanchu':
                         target.classList.add('menuHighLight');
+                        var con = confirm('确定退出该社群吗');
+                        if(con){
+                            // 发送请求退出该社群
+                        }
                         break;
                 }
             };
@@ -490,7 +545,11 @@
                 // 社群详情
                 oComDetail = doc.getElementById('com-detail'),
                 // 搜索界面
-                oSearchCom = doc.getElementById('search-com');
+                oSearchCom = doc.getElementById('search-com'),
+                // 通知界面
+                oNotice = doc.getElementById('notice-box'),
+                // 刷脸签到界面
+                oFaceSignIn = doc.getElementById('face-sign-in');
             oFooter.ontouchstart = function(e){
                 e = e||window.e;
                 var target = e.target||e.srcElement;
@@ -504,6 +563,8 @@
                         oAdminCom.style.transform = 'scale(0)';
                         oComDetail.style.transform = 'scale(0)';
                         oSearchCom.style.transform = 'scale(0)';
+                        oNotice.style.transform = 'scale(0)';
+                        oFaceSignIn.style.transform = 'scale(0)';
                         break;
                     // 签到历史
                     case 'iconfont icon-get':
@@ -511,6 +572,8 @@
                         oAdminCom.style.transform = 'scale(0)';
                         oComDetail.style.transform = 'scale(0)';
                         oSearchCom.style.transform = 'scale(0)';
+                        oNotice.style.transform = 'scale(0)';
+                        oFaceSignIn.style.transform = 'scale(0)';
                         oSignInHistory.style.transform = 'scale(1)';
                         checkMenuStyle(target.parentNode);
                         break;
@@ -520,6 +583,8 @@
                         oAdminCom.style.transform = 'scale(0)';
                         oComDetail.style.transform = 'scale(0)';
                         oSearchCom.style.transform = 'scale(0)';
+                        oNotice.style.transform = 'scale(0)';
+                        oFaceSignIn.style.transform = 'scale(0)';
                         oPublishHistory.style.transform = 'scale(1)';
                         checkMenuStyle(target.parentNode);
                         break;
@@ -529,7 +594,19 @@
                         oPublishHistory.style.transform = 'scale(0)';
                         oComDetail.style.transform = 'scale(0)';
                         oSearchCom.style.transform = 'scale(0)';
+                        oNotice.style.transform = 'scale(0)';
+                        oFaceSignIn.style.transform = 'scale(0)';
                         oAdminCom.style.transform = 'scale(1)';
+                        checkMenuStyle(target.parentNode);
+                        break;
+                    case 'iconfont icon-tixingtianchong':
+                        oSignInHistory.style.transform = 'scale(0)';
+                        oPublishHistory.style.transform = 'scale(0)';
+                        oComDetail.style.transform = 'scale(0)';
+                        oSearchCom.style.transform = 'scale(0)';
+                        oAdminCom.style.transform = 'scale(0)';
+                        oFaceSignIn.style.transform = 'scale(0)';
+                        oNotice.style.transform = 'scale(1)';
                         checkMenuStyle(target.parentNode);
                         break;
                 }
@@ -592,6 +669,9 @@
                     case 'click-to-location':
                         // 定位
                         Home.prototype.position(function(lati,longi){
+                            console.log('定位');
+                            console.log(lati);
+                            console.log(longi);
                             oSignInfo.lantitudeInput.value = lati;
                             oSignInfo.longitudeInput.value = longi;
                         });
@@ -763,6 +843,125 @@
                 }
             }
         },
+        // 通知界面事件委托
+        handleNotice: function(){
+            var oNoticeBox = doc.getElementById('notice-box');
+            var oSeeQuestion = doc.getElementById('see-question');
+            var oSeeQueUl = doc.querySelector('#see-question ul');
+            var wannerInComId = '';
+            var userId = '';
+            oNoticeBox.ontouchstart=function(e){
+                e = e||window.e;
+                var target = e.target||e.srcElement;
+                switch(target.className){
+                    // 查看回答问题信息
+                    case 'see-info':
+                        oSeeQuestion.style.transform = 'scale(1)';
+                        wannerInComId = target.parentNode.parentNode.parentNode.getAttribute('wannerInComId');
+                        userId = target.parentNode.parentNode.parentNode.getAttribute('userId');
+                        // 先清空之前的填补
+                        oSeeQueUl.innerHTML = '';
+                        ajax({
+                            url: '/community/getComQuestionForUser',
+                            method: 'get',
+                            data: {
+                                userId: userId,
+                                wannerInComId: wannerInComId
+                            },
+                            contentType: 'application/json',
+                            success: function(res){
+                                res = JSON.parse(res);
+                                console.log(res);
+                                var data = res.data;
+                                var frag = doc.createDocumentFragment();
+                                for(var i=0,len=data.length;i<len;i++){
+                                    var item = doc.createElement('li');
+                                    item.innerHTML = '<p><i class="iconfont icon-fanshe"></i>'+data[i].question+'</p><input type="text" name="addr" disabled=true value="'+data[i].answer+'">';
+                                    frag.appendChild(item);
+                                }
+                                oSeeQueUl.appendChild(frag);
+                            },
+                            fail: function(err){        
+                                console.log('err: '+err);
+                            }
+                        })
+                        break;
+                    // 直接同意加入
+                    case 'join':
+                        // 发请求把该同志加入该社群
+                        break;
+                }
+            };
+            oSeeQuestion.ontouchstart = function(e){
+                e = e||window.e;
+                var target = e.target||e.srcElement;
+                switch(target.className){
+                    case 'iconfont icon-guanbi close':
+                        oSeeQuestion.style.transform = 'scale(0)';
+                        break;
+                    // 拒绝
+                    case 'reset':
+                        ajax({
+                            url: '/community/refuseIntoCom',
+                            method: 'get',
+                            data: {
+                                userId: userId,
+                                wannerIntoComId: wannerInComId
+                            },
+                            contentType: 'application/json',
+                            success: function(res){
+                                res = JSON.parse(res);
+                                console.log(res);
+                                handleStipInfo(res.msg);
+                                if(res.status=='success'){
+                                    oSeeQuestion.style.transform='scale(0)';
+                                }
+                            },
+                            fail: function(err){
+                                console.log(err);
+                            }
+                        });
+                        break;
+                    // 同意
+                    case 'submit':
+                        ajax({
+                            url: '/community/agreeIntoCom',
+                            method: 'get',
+                            data: {
+                                userId: userId,
+                                wannerIntoComId: wannerInComId
+                            },
+                            contentType: 'application/json',
+                            success: function(res){
+                                res = JSON.parse(res);
+                                console.log(res);
+                                handleStipInfo(res.msg);
+                                if(res.status=='success'){
+                                    oSeeQuestion.style.transform='scale(0)';
+                                }
+                            },
+                            fail: function(err){
+                                console.log(err);
+                            }
+                        });
+                        break;
+                }
+            }
+        },
+        // 拉取首页加入的所有社群，并显示签到信息
+        getJoinedCom: function(){
+            ajax({
+                url: '/community/getJoinedCom',
+                method: 'get',
+                success: function(res){
+                    res = JSON.parse(res);
+                    console.log(res);
+                },
+                fail: function(err){
+                    console.log(err);
+                }
+            })
+        },
         // 拉取‘社群管理界面’信息请求
         getAdminComInfo: function(){
             ajax({
@@ -864,6 +1063,21 @@
                 }
             })
         },
+        // 查询要加入我的社群的成员
+        getWannerIntoMyCom: function(){
+            ajax({
+                url:'/community/getWannerIntoMyCom',
+                method: 'get',
+                success: function(res){
+                    res = JSON.parse(res);
+                    console.log(res);
+                    Home.prototype.renderWannerIntoMyCom(res.data);
+                },
+                fail: function(err){
+                    console.log('err:'+err);
+                }
+            });
+        },
         // 渲染'社群管理界面'信息
         renderAdminComInfo: function(data){
             var oBox = doc.querySelector('#admin-com ul');
@@ -888,6 +1102,128 @@
                 frag.appendChild(item);
             }
             oBox.appendChild(frag);
+        },
+        // 渲染查询到的‘要加入我的社群的成员’
+        renderWannerIntoMyCom: function(data){
+            var oBox = doc.querySelector('#notice-box ul'),
+                frag = doc.createDocumentFragment();
+            for(var i=0,len=data.length;i<len;i++){
+                var item = doc.createElement('li');
+                item.setAttribute('userId',data[i].userId);
+                item.setAttribute('wannerInComId',data[i].comId);
+                item.innerHTML = '<div class="img"><img src="./images/com/1.png" alt="img"></div><div class="info"><p>'+data[i].userName+' <span>申请加入</span></p><p><i class="iconfont icon-ditu-dibiao"></i><span>'+data[i].comName+'</span></p><p><i class="iconfont icon-ditu-qipao"></i><span class="see-info" style="color:#aaa;text-decoration:underline">查看信息</span></p></div><button class="join">同意</button>';
+                frag.appendChild(item);
+            }
+            oBox.appendChild(frag);
+        },
+        handleFaceSign: function(){
+            console.log('获取人脸');
+            var video = doc.getElementById('video'),
+                canvas = doc.getElementById('canvas'),
+                oStartBtn = doc.getElementById('clickPhoto'),
+                oStipInfo = doc.getElementById('info'),
+                oFaceAnimation = doc.getElementById('faceAnimation'),
+                context = canvas.getContext('2d'),
+                aRedSpans = doc.querySelectorAll('#process .circle'),
+                // 是否开始捕获媒体
+                streaming = false;
+                // 截取的脸部src
+                faceSrc = '',
+                timer = null;
+            navigator.mediaDevices.getUserMedia({
+            // navigator.getUserMedia({
+                video: true,
+                audio: false
+            })
+            .then(stream => {
+                video.srcObject = stream;
+                video.play();
+            });
+            // 定时拍照
+            oStartBtn.onclick = function(){
+                oStartBtn.disabled = true;
+                oStartBtn.style.backgroundColor = 'rgb(155,202,62)';
+                oStartBtn.style.color = '#fff';
+                oFaceAnimation.style.display = 'block';
+                video.style.display = 'block';
+                timer = setInterval(autoPhoto,1000);
+            };
+            video.addEventListener('canplay',function(e){
+                if(!streaming) {
+                    streaming = true;
+                }
+            });
+            // 发送人脸到后台
+            function autoPhoto(){
+                console.log('拍照啦');
+                if(streaming) {
+                    context.drawImage(video,-45,0,390,150);
+                    faceSrc = canvas.toDataURL('image/png').split(',')[1];
+                    // console.log(canvas.toDataURL('image/png').split(',')[0]);
+                    Login.prototype.ajaxPost({
+                        url: '/user/onlineVivoDetection',
+                        data: faceSrc,
+                        contentType: 'application/x-www-form-urlencoded',
+                        success: function(res){
+                            console.log(res);
+                            res = JSON.parse(res);
+                            if(res.status == 'success'){
+                                video.style.display = 'none';
+                                oStipInfo.innerHTML = '识别完毕,请点击注册或登录';
+                                oStartBtn.innerHTML = '识别成功';
+                                oFaceAnimation.style.display = 'none';                 
+                                clearInterval(timer);
+                                // 人脸验证是否还是他
+                                ajax({
+                                    url:'/user/faceSignMatch',   
+                                    method: 'post',
+                                    data: {
+                                        faceImg: faceSrc
+                                    },
+                                    contentType: 'application/json',
+                                    success: function(res){
+                                        res = JSON.parse(res);
+                                        console.log(res);
+                                        handleStipInfo(res.msg);
+                                        if(res.status=='success'){
+                                            aRedSpans[0].style.backgroundColor = 'rgb(155,202,62)';
+                                        }
+                                        // 存入经纬度进行比对
+                                        Home.prototype.position(function(lati,longi){
+                                            console.log(lati);
+                                            console.log(longi);
+                                            ajax({
+                                                url: '/user/signToLocation',
+                                                method: 'get',
+                                                data: {
+                                                    latitude: lati,
+                                                    longitude: longi
+                                                },
+                                                contentType: 'application/json',
+                                                success:function(res){
+                                                    res = JSON.parse(res);
+                                                    console.log(res);
+                                                },
+                                                fail: function(err){
+                                                    console.log(err);
+                                                }
+                                            })
+                                        })
+                                    },
+                                    fail: function(err){
+                                        console.log(err);
+                                    }
+                                })
+                            }else {
+                                oStipInfo.innerHTML = res.msg;
+                            }
+                        },
+                        fail: function(status){
+                            console.log('err status: '+status);
+                        }
+                    })
+                }
+            }
         },
         getCookieModule: function(){
             return COOKIE;

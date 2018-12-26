@@ -52,6 +52,7 @@
                 if(streaming) {
                     context.drawImage(video,-45,0,390,150);
                     faceSrc = canvas.toDataURL('image/png').split(',')[1];
+                    // console.log(canvas.toDataURL('image/png').split(',')[0]);
                     Login.prototype.ajaxPost({
                         url: '/user/onlineVivoDetection',
                         data: faceSrc,
@@ -61,14 +62,13 @@
                             res = JSON.parse(res);
                             if(res.status == 'success'){
                                 video.style.display = 'none';
-                                oStipInfo.innerHTML = '识别完毕,请输入手机号，后点击注册或登录';
+                                oStipInfo.innerHTML = '识别完毕,请点击注册或登录';
                                 oStartBtn.innerHTML = '识别成功';
                                 oFaceAnimation.style.display = 'none';                 
                                 clearInterval(timer);
                                 Login.prototype.regist_login(faceSrc);
                             }else {
                                 oStipInfo.innerHTML = res.msg;
-                                oStartBtn.innerHTML = '重新识别';
                             }
                         },
                         fail: function(status){
@@ -140,7 +140,7 @@
                             break;
                     }
                 }else {
-                    oTelInput.style.borderColor = '#f00';
+                    // oTelInput.style.borderColor = '#f00';
                 }
             }
         },
