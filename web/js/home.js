@@ -34,7 +34,7 @@
         // 通知界面事件委托
         this.handleNotice();
         // 人脸签到
-        // this.handleFaceSign();
+        this.handleFaceSign();
     }
     Object.defineProperty(Home.prototype,'constructor',{
         enumerable: false,
@@ -1125,6 +1125,8 @@
                 oFaceAnimation = doc.getElementById('faceAnimation'),
                 context = canvas.getContext('2d'),
                 aRedSpans = doc.querySelectorAll('#process .circle'),
+                // 签到页面
+                oFaceSignIn = doc.getElementById('face-sign-in'),
                 // 是否开始捕获媒体
                 streaming = false;
                 // 截取的脸部src
@@ -1159,9 +1161,10 @@
                 if(streaming) {
                     context.drawImage(video,-45,0,390,150);
                     faceSrc = canvas.toDataURL('image/png').split(',')[1];
-                    // console.log(canvas.toDataURL('image/png').split(',')[0]);
-                    Login.prototype.ajaxPost({
+                    // console.log(canvas.toDataURL('image/png').spit(',')[0]);
+                    Home.prototype.ajaxPost({
                         url: '/user/onlineVivoDetection',
+                        method: 'post',
                         data: faceSrc,
                         contentType: 'application/x-www-form-urlencoded',
                         success: function(res){
@@ -1169,7 +1172,7 @@
                             res = JSON.parse(res);
                             if(res.status == 'success'){
                                 video.style.display = 'none';
-                                oStipInfo.innerHTML = '识别完毕,请点击注册或登录';
+                                oStipInfo.innerHTML = '识别完毕';
                                 oStartBtn.innerHTML = '识别成功';
                                 oFaceAnimation.style.display = 'none';                 
                                 clearInterval(timer);
@@ -1203,6 +1206,13 @@
                                                 success:function(res){
                                                     res = JSON.parse(res);
                                                     console.log(res);
+                                                    handleStipInfo(res.msg);
+                                                    aRedSpans[1].style.backgroundColor = 'rgb(155,202,62)';
+                                                    aRedSpans[2].style.backgroundColor = 'rgb(155,202,62)';
+                                                    var timer = setTimeout(function(){
+                                                        clearTimeout(timer);
+                                                        oFaceSignIn.style.transform = 'scale(0)';
+                                                    },2000);
                                                 },
                                                 fail: function(err){
                                                     console.log(err);
@@ -1224,6 +1234,22 @@
                     })
                 }
             }
+        },
+        ajaxPost: function(config){
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function(){
+                if(xhr.readyState==4){
+                    if((xhr.status>=200&&xhr.status<300)||xhr.status==304){
+                        let data = xhr.responseText;
+                        config.success&&config.success(data);
+                    }else{
+                        config.fail&&config.fail(xhr.status);
+                    }
+                }
+            }
+            xhr.open('post',config.url,true);
+            xhr.setRequestHeader('Content-type',config.contentType);
+            xhr.send(config.data);
         },
         getCookieModule: function(){
             return COOKIE;

@@ -1077,7 +1077,7 @@ footer ul li i.iconfont {
   font-size: .8rem;
 }
 #face-sign-in {
-  transform: scale(1);
+  transform: scale(0);
 }
 #process {
   margin-top: 1rem;

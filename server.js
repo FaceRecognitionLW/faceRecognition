@@ -169,11 +169,6 @@ userRouter.post('/onlineVivoDetection',function(req,res){
             res.end();
         });
     })
-    // res.end('活体检测');
-    // res.send({
-    //     status: 'success',
-    //     // res: ''
-    // })
 });
 // 人脸签到之人脸识别
 userRouter.post('/faceSignMatch',function(req,res){
@@ -216,6 +211,7 @@ userRouter.post('/faceSignMatch',function(req,res){
         }
     })
 })
+// 登录
 userRouter.post('/login',function(req,res){
     console.log('login');
     // 人脸图像
@@ -286,6 +282,7 @@ userRouter.post('/login',function(req,res){
         }
     })
 });
+// 注册
 userRouter.post('/regist',function(req,res){
     console.log('regist');
     let REQINFO = '';
@@ -405,6 +402,7 @@ userRouter.post('/regist',function(req,res){
         console.log('人脸注册失败'+err);
     });
 });
+// 
 userRouter.post('/completeInfo',function(req,res){  
     // req.body用来获取非文件数据
     let headImg = req.body.headImg.split(',')[1];
@@ -457,6 +455,13 @@ userRouter.post('/completeInfo',function(req,res){
         });
     })
 });
+userRouter.get('/signToLocation',function(req,res){
+    console.log('signToLocation');
+    res.send({
+        status: 'success',
+        msg: '定位成功'
+    });
+})
 server.use('/user',userRouter);
 
 // 2.社群接口路由
