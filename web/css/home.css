@@ -214,7 +214,6 @@ section {
 #search-com li:not(:nth-child(1))， #notice-box,
 #notice-box li:not(:nth-child(1)) {
   width: 100%;
-  margin-top: 1rem;
 }
 #ckeck-info li,
 #sign-in-history li,
@@ -365,7 +364,6 @@ footer ul li i.iconfont {
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
   padding-top: 2.5rem;
   padding-bottom: 3rem;
   background-color: #f6f7f7;

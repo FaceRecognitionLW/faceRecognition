@@ -455,17 +455,11 @@ userRouter.post('/completeInfo',function(req,res){
         });
     })
 });
-userRouter.get('/signToLocation',function(req,res){
-    console.log('signToLocation');
-    res.send({
-        status: 'success',
-        msg: '定位成功'
-    });
-})
 server.use('/user',userRouter);
 
 // 2.社群接口路由
 const comRouter = express.Router();
+// 创建社群
 comRouter.post('/createCom',function(req,res){
     // console.log(req.body);
     let headImg = req.body.headImg.split(',')[1],
@@ -539,6 +533,47 @@ comRouter.get('/:id',function(req,res){
     let USERID = req.cookies["user"];
     console.log(USERID);
     switch(reqId) {
+        // 获取签到信息
+        case 'getSignInfo':
+            let getSignInfoSql = 'SELECT publish.*,user.userName,community.comImg,community.comName FROM publish,user,community where publish.comId in(select comId from user_com where userId="'+USERID+'") and publish.endTime>"'+moment(new Date()).format("YYYY-MM-DD HH:mm:ss")+'" and publish.managerId=user.userId and community.comId in(select comId from publish);';
+            console.log(getSignInfoSql);
+            console.log('获取签到信息');
+            HANDLESQL(CONN,getSignInfoSql,function(data,err){
+                if(err){
+                    console.log('签到信息拉取失败');
+                    res.send({
+                        status: 'fail',
+                        msg: '签到信息拉取失败'
+                    });
+                }else {
+                    console.log(data);
+                    res.send({
+                        status: 'success',
+                        data: data
+                    });
+                }
+            });
+            break;
+        // 获取发布历史信息
+        case 'getPublishHistory':
+            let getPublishHistorySql = 'SELECT publish.*,user.userName,community.comName,community.comImg FROM publish,user,community where managerId="'+USERID+'" and user.userId=publish.managerId and publish.comId=community.comId;';
+            HANDLESQL(CONN,getPublishHistorySql,function(data,err){
+                if(err){
+                    console.log('获取发布历史信息失败');
+                    res.send({
+                        status: 'fail',
+                        msg: '获取发布历史信息失败'
+                    });
+                }else {
+                    console.log('获取发布历史信息成功');
+                    console.log(data);
+                    res.send({
+                        status: 'success',
+                        data: data
+                    });
+                }
+            })
+            break;
         // 拉取该用户创建的所有社群
         case 'getCreatedCom':
             console.log('getCreatedCom');
@@ -562,7 +597,6 @@ comRouter.get('/:id',function(req,res){
             break;
         // 删除某个社群
         case 'delCreatedCom':
-            
             break;
         // 获取社群信息
         case 'getComs':
@@ -576,6 +610,11 @@ comRouter.get('/:id',function(req,res){
                     });
                 }else {
                     console.log('社群查询成功');
+                    for(var i=0,len=data.length;i<len;i++){
+                        data[i].startTime=moment(data[i].startTime).format('YYYY-MM-DD HH:mm:ss');
+                        data[i].endTime=moment(data[i].endTime).format('YYYY-MM-DD HH:mm:ss');
+                        data[i].publishTime=moment(data[i].publishTime).format('YYYY-MM-DD HH:mm:ss');
+                    }
                     res.send({
                         status: 'success',
                         data: data
@@ -630,36 +669,6 @@ comRouter.get('/:id',function(req,res){
                 }
             })
             break;
-        // 获取想要进如我的社群的成员
-        case 'getWannerIntoMyCom':
-            console.log('getWannerIntoMyCom');
-            new Promise((resolve,reject) => {
-                console.log('根据userId找到该用户创建的所有com');
-                let findUserAnswerSql = 'SELECT com_answer.userId,user.userName,user.userImg,community.comId,community.comName FROM com_answer,user,community,com_question where community.comId=com_question.comId and com_question.questionId=com_answer.questionId and com_answer.userId=user.userId and community.createUserId="'+USERID+'";';
-                HANDLESQL(CONN,findUserAnswerSql,function(data,err){
-                    if(err){
-                        console.log('查询com失败');
-                    }else {
-                        console.log('查询com成功');
-                        console.log(data);
-                        resolve(data);
-                    }
-                })
-            })
-            .then(data => {
-                res.send({
-                    status: 'success',
-                    data: data
-                });
-            })
-            .catch(err => {
-                console.log('查询失败');
-                res.send({
-                    status: 'fail',
-                    msg: '查询失败'
-                });
-            })
-            break;
         // 查找某个用户进入社群回答的信息
         case 'getComQuestionForUser':
             console.log(req.query);
@@ -681,6 +690,25 @@ comRouter.get('/:id',function(req,res){
                 }
             });
             break;
+        // 社群加入申请
+        case 'getJoinedCom':
+            let getJoinedComSql = 'SELECT community.comId,community.comName,community.comImg,comapply.comId,comapply.userId,user.userName FROM community,comapply,user WHERE community.createUserId="'+USERID+'" and community.comId=comapply.comId and user.userId=comapply.userId';
+            HANDLESQL(CONN,getJoinedComSql,function(data,err){
+                if(err){
+                    console.log('获取通知失败: '+err);
+                    res.send({
+                        status: 'fail',
+                        msg: '获取通知失败'
+                    });
+                }else {
+                    console.log('获取通知成功');
+                    res.send({
+                        status: 'success',
+                        data: data
+                    });
+                }
+            })
+            break;
         // 同意该成员进入社群
         case 'agreeIntoCom':
             console.log(req.query);
@@ -688,50 +716,56 @@ comRouter.get('/:id',function(req,res){
             console.log('插入user_com表格');
             console.log(req.query.wannerIntoComId);
             let insertUserComSql = 'INSERT INTO user_com(userId,comId) values("'+req.query.userId+'",'+req.query.wannerIntoComId+');';
-            let delAnswerSql = 'DELETE FROM com_answer where questionId in(SELECT questionId FROM com_question where comId='+req.query.wannerIntoComId+');';
+            let agree_delAnswerSql = 'DELETE FROM com_answer where questionId in(SELECT questionId FROM com_question where comId='+req.query.wannerIntoComId+');';
+            let agree_delComApply = 'DELETE FROM comapply where userId="'+req.query.userId+'" and comId="'+req.query.wannerIntoComId+'";';
             console.log(insertUserComSql);
-            console.log(delAnswerSql);
+            console.log(agree_delAnswerSql);
             Promise.all([
                 // 插入user_com表格
                 HANDLESQL(CONN,insertUserComSql),
                 // 删除回答的问题
-                HANDLESQL(CONN,delAnswerSql)
+                HANDLESQL(CONN,agree_delAnswerSql),
+                // 删除comapply
+                HANDLESQL(CONN,agree_delComApply)
             ])
             .then(data => {
                 res.send({
                     status: 'success',
-                    msg: '进入社群成功'
+                    msg: '已同意'
                 });
             })
             .catch(err =>{
                 console.log('进入社群失败');
                 res.send({
                     status: 'fail',
-                    msg: '进入社群失败'
+                    msg: '已拒绝'
                 });
             })
             break;
         // 拒绝该成员进入社群
         case 'refuseIntoCom':
-        let refuseIntoComSql = 'DELETE FROM com_answer where questionId in(SELECT questionId FROM com_question where comId='+req.query.wannerIntoComId+');';
-            HANDLESQL(CONN,refuseIntoComSql,function(data,err){
-                if(err){
-                    console.log('删除失败');
-                    res.send({
-                        status: 'fail',
-                        msg: '拒绝失败'
-                    });
-                }else {
-                    res.send({
-                        status: 'success',
-                        msg: '拒绝成功'
-                    });
-                }
-            });
-            console.log(req.query);
-            break;
-        case 'getJoinedCom':
-            let getJoinedComSql = 'SELECT '
+            let refuseIntoComSql = 'DELETE FROM com_answer where questionId in(SELECT questionId FROM com_question where comId='+req.query.wannerIntoComId+');';
+            let ref_delComApply = 'DELETE FROM comapply where userId="'+req.query.userId+'" and comId="'+req.query.wannerIntoComId+'";';
+            Promise.all([
+                // 删除问题
+                HANDLESQL(CONN,refuseIntoComSql),
+                // 删除comapply
+                HANDLESQL(CONN,ref_delComApply)    
+            ])
+            .then(data => {
+                console.log('拒绝成功');
+                res.send({
+                    status: 'success',
+                    msg: '拒绝成功'
+                });
+            })
+            .catch(err => {
+                console.log('删除失败');
+                res.send({
+                    status: 'fail',
+                    msg: '拒绝失败'
+                });
+            })
             break;
     }
     
@@ -750,55 +784,136 @@ comRouter.post('/publishSign',function(req,res){
         endTime: moment(req.body.endTime).format("'YYYY-MM-DD HH:mm:ss'")
     };
     let insertPublishSignSql = 'INSERT INTO publish(comId,managerId,signAddr,latitude,longitude,signRange,startTime,endTime) values("'+reqInfo.comId+'","'+reqInfo.managerId+'","'+reqInfo.addr+'","'+reqInfo.latitude+'","'+reqInfo.longitude+'","'+reqInfo.range+'","'+reqInfo.startTime+'","'+reqInfo.endTime+'");';
-    HANDLESQL(CONN,insertPublishSignSql,function(data,err){
-        if(err){
-            console.log('插入publish失败');
-            res.send({
-                status: 'fail',
-                msg: '发布签到信息失败'
-            });
-        }else {
-            console.log('插入publish成功');
-            res.send({
-                status: 'success',
-                msg: '发布签到信息成功'
-            });
-        }
-    });
+    new Promise((resolve,reject) => {
+        HANDLESQL(CONN,insertPublishSignSql,function(data,err){
+            if(err){
+                console.log('插入publish失败');
+                reject(err.sqlMessage);
+            }else {
+                console.log('插入publish成功');
+                resolve(data.insertId);
+            }
+        });
+    })
+    .then(data => {
+        let insertPublishStatus = 'INSERT publishstatus VALUES("'+data+'","0");';
+        HANDLESQL(CONN,insertPublishStatus,function(data,err){
+            if(err){
+                console.log('publishstatus插入失败');
+                res.send({
+                    status: 'fail',
+                    msg: '发布签到信息失败'
+                });
+            }else {
+                console.log('插入publisstatus成功');
+                res.send({
+                    status: 'success',
+                    msg: '发布签到信息成功'
+                });
+            }
+        })
+    })
+    .catch(err => {
+        console.log('err: '+err);
+        res.send({
+            status: 'fail',
+            msg: '发布签到信息失败'
+        });
+    })
+    
 })
 // 回答问题申请进入社群
 comRouter.post('/reqToIntoCom',function(req,res){
-    let USERID = req.cookies["user"];
     console.log(req.body);
-    let REQINFO = req.body;
+    let USERID = req.cookies["user"];
+    let REQINFO = req.body.answerList;
+    let COMID = req.body.comId;
     // 将问题存进数据库com_answer
-    let insertValues = '';
+    let insertValues = '',
+        reqToIntoComSql='',
+        comApplyCom = '';
+    /*==================插入‘回答的问题’=====================*/ 
     for(let key in REQINFO) {
         insertValues+='('+parseInt(key)+',"'+REQINFO[key]+'","'+USERID+'"),';
     }
     insertValues = insertValues.substr(0,insertValues.length-1);
-    let reqToIntoComSql = 'INSERT INTO com_answer(questionId,answer,userId) values'+insertValues;
+    reqToIntoComSql = 'INSERT INTO com_answer(questionId,answer,userId) values'+insertValues;
     console.log(reqToIntoComSql);
-    HANDLESQL(CONN,reqToIntoComSql,function(data,err){
-        if(err){
-            console.log('问题插入失败');
-            res.send({
-                status: 'fail',
-                msg: '申请失败'
-            });
-        }else {
-            console.log('问题插入成功');
-            res.send({
-                status: 'success',
-                msg: '请等待审核'
-            });
-        }
+    comApplyCom = 'INSERT INTO comapply(userId,comId) VALUES("'+USERID+'","'+COMID+'");';
+    /*=================================================*/ 
+    Promise.all([
+        HANDLESQL(CONN,reqToIntoComSql,function(data,err){
+            if(err){
+                console.log('问题插入失败');
+                res.send({
+                    status: 'fail',
+                    msg: '申请失败'
+                });
+            }else {
+                console.log('问题插入成功');
+                
+            }
+        }),
+        HANDLESQL(CONN,comApplyCom,function(data,err){
+            if(err){
+                console.log('申请进入社群失败');
+                res.send({
+                    status: 'fail',
+                    msg: '申请失败'
+                })
+            }else {
+                console.log('申请进入社群插入成功');
+            }
+        })
+    ])
+    .then(data => {
+        console.log('申请成功');
+        res.send({
+            status: 'success',
+            msg: '请等待审核'
+        });
+    })
+    .catch(err => {
+        console.log('申请失败');
+        res.send({
+            status: 'fail',
+            msg: '申请失败'
+        });
     })
 })
 server.use('/community',comRouter);
 
+// 3.签到路由
+const signInRouter = express.Router();
+signInRouter.post('/signInSuccess',function(req,res){
+    let REQINFO = req.body;
+    let USERID = req.cookies["user"];
+    console.log(REQINFO);
+    let signInSuccessSql = 'INSERT INTO usersignstatus(publishId,userId,signStatus,latitude,longitude,distance) VALUES('+REQINFO.publishId+',"'+USERID+'",1,'+REQINFO.latitude+','+REQINFO.longitude+','+REQINFO.distance+');';
+    let signStatusSql = 'UPDATE publishstatus SET signMen=signMen+1 where publishId='+REQINFO.publishId+';';
+    console.log(signInSuccessSql);
+    Promise.all([
+        HANDLESQL(CONN,signInSuccessSql),
+        HANDLESQL(CONN,signStatusSql)
+    ])
+    .then(data => {
+        console.log('签到成功');
+        res.send({
+            status: 'success',
+            msg: '签到成功'
+        });
+    })
+    .catch(err => {
+        console.log('签到失败');
+        res.send({
+            status: 'fail',
+            msg: '签到失败'
+        });
+    })
+})
+server.use('/signIn',signInRouter);
 
-// 人脸识别功能接口路由
+// 4.人脸识别功能接口路由
 const faceRoute = express.Router();
 faceRoute.post('/detection',function(req,res){
     let base64Img="";

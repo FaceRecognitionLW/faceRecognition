@@ -11,30 +11,27 @@
         this.handleHeaderClick();
         // menu事件委托
         this.handleMenuClick();
-        // 快捷发布签到信息
-        this.handlePublishSignQuick();
-        // 创建社群
-        this.handleCreateCom();
         // section事件委托
         this.handleSectionClick();
         // circleMenu事件委托
-        this.handleCircleMenuClick();
+        // this.handleCircleMenuClick();
         // footer事件委托
         this.handleFooterClick();
         // admin-com事件委托
         this.handleAdminCom();
         // 控制社群详情事件委托
         this.handleComDetail();
-        // 渲染社群管理界面信息
-        this.getAdminComInfo();
         // 社群搜索结果事件委托
         this.handleSearchCom();
-        // 查询想要加入我创建社群的成员
-        this.getWannerIntoMyCom();
+        // 快捷发布签到信息
+        this.handlePublishSignQuick();
+        // 创建社群
+        this.handleCreateCom();
         // 通知界面事件委托
         this.handleNotice();
-        // 人脸签到
-        this.handleFaceSign();
+        
+        // 查询并渲染签到信息
+        this.getSignInfo();
     }
     Object.defineProperty(Home.prototype,'constructor',{
         enumerable: false,
@@ -46,6 +43,8 @@
             var oOpenAnimation = doc.getElementById('stage');
             if(Home.prototype.getCookieModule().get('user')) {
                 oOpenAnimation.style.display = 'none';
+                // 渲染社群管理界面信息
+                // this.getAdminComInfo();
             }else {
                 var timer = setTimeout(function(){  
                     // oOpenAnimation.style.display = "none";
@@ -58,19 +57,24 @@
         // 获取用户的经纬度
         position: function(callback){
             console.log('position');
-            navigator.geolocation.getCurrentPosition(function(position){
-                console.log('成功');
-                console.log('用户十进制纬度: '+position.coords.latitude);
-                console.log('用户十进制经度: '+position.coords.longitude);
-                var lati = position.coords.latitude;
-                var longi = position.coords.longitude;
-                callback&&callback(lati,longi);
-                // Home.prototype.translateCoordinate(lati,longi);
-                // Home.prototype.indoorMap(lati,longi);
-            },function(err){
-                console.log('Error code :'+err.code);
-                console.log('Erroe message: '+err.message)
-            })
+            // 用HTML5进行定位
+            if(navigator.geolocation){
+                navigator.geolocation.getCurrentPosition(function(position){
+                    console.log('成功');
+                    console.log('用户十进制纬度: '+position.coords.latitude);
+                    console.log('用户十进制经度: '+position.coords.longitude);
+                    var lati = position.coords.latitude;
+                    var longi = position.coords.longitude;
+                    callback&&callback(lati,longi);
+                    // Home.prototype.translateCoordinate(lati,longi);
+                    // Home.prototype.indoorMap(lati,longi);
+                },function(err){
+                    console.log('Error code :'+err.code);
+                    console.log('Erroe message: '+err.message)
+                })
+            }else {
+                alert('您的设备无法获取地理位置服务');
+            }
         },
         // 将GPS经纬度转换为百度……
         translateCoordinate: function(lanti,longi){
@@ -479,17 +483,30 @@
         handleSectionClick: function(){
             var oSection = doc.querySelector('section'),
                 oCircleMenu = doc.getElementById('circle-menu');
+            var aimLatitude,aimLongitude,aimRange,comId,publishId;
             oSection.ontouchstart = function(e){
                 e = e||window.e;
                 var target = e.target||e.srcElement;
                 console.log(target);
                 if(target.className == "signIn") {
                     oCircleMenu.style.transform = 'scale(1)';
+                    aimLatitude = target.parentNode.getAttribute('latitude');
+                    aimLongitude = target.parentNode.getAttribute('longitude');
+                    aimRange = target.parentNode.getAttribute('signRange');
+                    comId = target.parentNode.getAttribute('comId');
+                    publishId = target.parentNode.getAttribute('publishId');
+                    Home.prototype.handleCircleMenuClick({
+                        aimLatitude: aimLatitude,
+                        aimLongitude: aimLongitude,
+                        aimRange: aimRange,
+                        comId: comId,
+                        publishId: publishId
+                    });
                 }
             }
         },
         // 圆形菜单事件委托
-        handleCircleMenuClick: function() {
+        handleCircleMenuClick: function(config) {
             var oCircleMenu = doc.getElementById('circle-menu'),
                 oComDetail = doc.getElementById('com-detail'),
                 // 刷脸人脸签到界面
@@ -508,6 +525,8 @@
                         target.classList.add('menuHighLight');
                         oFaceSignIn.style.transform = 'scale(1)';
                         this.style.transform = 'scale(0)';
+                        // 人脸签到
+                        Home.prototype.handleFaceSign(config);
                         break;
                     // 进入社群
                     case 'iconfont icon-fanshe':
@@ -555,7 +574,7 @@
                 var target = e.target||e.srcElement;
                 console.log(target);
                 switch(target.className) {
-                    // 签到
+                    // 消息
                     case 'iconfont icon-ditu-tuding':
                         checkMenuStyle(target.parentNode);
                         oSignInHistory.style.transform = 'scale(0)';
@@ -565,6 +584,10 @@
                         oSearchCom.style.transform = 'scale(0)';
                         oNotice.style.transform = 'scale(0)';
                         oFaceSignIn.style.transform = 'scale(0)';
+                        // 拉取签到消息
+                        if(doc.querySelectorAll('#ckeck-info ul li').length==0) {
+                            Home.prototype.getSignInfo();
+                        }
                         break;
                     // 签到历史
                     case 'iconfont icon-get':
@@ -587,6 +610,10 @@
                         oFaceSignIn.style.transform = 'scale(0)';
                         oPublishHistory.style.transform = 'scale(1)';
                         checkMenuStyle(target.parentNode);
+                        // 查询发布历史
+                        if(doc.querySelectorAll('#publish-history ul li').length==0){
+                            Home.prototype.getPublishHistory();
+                        }
                         break;
                     // 管理社群
                     case 'iconfont icon-zuzhiqunzu':
@@ -598,7 +625,12 @@
                         oFaceSignIn.style.transform = 'scale(0)';
                         oAdminCom.style.transform = 'scale(1)';
                         checkMenuStyle(target.parentNode);
+                        // 拉取创建的社群信息
+                        if(doc.querySelectorAll('#admin-com ul li').length==0){
+                            Home.prototype.getAdminComInfo();
+                        }
                         break;
+                    // 通知
                     case 'iconfont icon-tixingtianchong':
                         oSignInHistory.style.transform = 'scale(0)';
                         oPublishHistory.style.transform = 'scale(0)';
@@ -608,6 +640,10 @@
                         oFaceSignIn.style.transform = 'scale(0)';
                         oNotice.style.transform = 'scale(1)';
                         checkMenuStyle(target.parentNode);
+                        // 查询‘通知’界面消息
+                        if(doc.querySelectorAll('#notice-box ul li').length==0){
+                            Home.prototype.getWannerIntoMyCom();
+                        }
                         break;
                 }
             };
@@ -701,12 +737,16 @@
                 oAllMemCon = doc.querySelector('#com-detail .bottom .members'),
                 oPostingEdit = doc.querySelector('#com-detail .posting .content'),
                 oReplyBox = doc.getElementById('post-word');
-            // oComDetailBox.ontouchstart = function(e){
-            //     e = e||window.e;
-            //     var target = e.target||e.srcElement;
-            //     e.stopPropagation();
-            //     oAllMemCon.style.transform = "translateX(0)";
-            // }
+            oComDetailBox.ontouchstart = function(e){
+                e = e||window.e;
+                var target = e.target||e.srcElement;
+                switch(target.className) {
+                    case 'close-big-btn':
+                    case 'iconfont icon-guanbi1':
+                        this.style.transform = 'scale(0)';
+                        break;
+                }
+            };
             oAllMemBtn.open = true;
             oAllMemBtn.ontouchstart = function(){
                 console.log(this.open);
@@ -752,38 +792,45 @@
                 e = e||window.e;
                 var target = e.target||e.srcElement;
                 console.log(target);
-                if(target.className =='join') {
-                    oAnswerBox.style.transform = 'scale(1)';
-                    oAnswerUl.innerHTML = '';
-                    // 请求问题
-                    ajax({
-                        url: '/community/getQueToCom',
-                        method: 'get',
-                        data: {
-                            comId: target.parentNode.getAttribute('comId')
-                        },
-                        contentType: 'application/json',
-                        success: function(res){
-                            res = JSON.parse(res);
-                            console.log(res);
-                            var data = res.data;
-                            var frag = doc.createDocumentFragment();
-                            // 渲染问题
-                            if(data.length>0){
-                                for(var i=0,len=data.length;i<len;i++){
-                                    var item = doc.createElement('li');
-                                    item.setAttribute('questionId',data[i].questionId);
-                                    item.innerHTML = '<p><i class="iconfont icon-fanshe"></i>'+data[i].question+'</p><input type="text" name="addr">';
-                                    frag.appendChild(item);
+                switch(target.className){
+                    case 'join':
+                        oAnswerBox.style.transform = 'scale(1)';
+                        oAnswerUl.innerHTML = '';
+                        // 请求问题
+                        ajax({
+                            url: '/community/getQueToCom',
+                            method: 'get',
+                            data: {
+                                comId: target.parentNode.getAttribute('comId')
+                            },
+                            contentType: 'application/json',
+                            success: function(res){
+                                res = JSON.parse(res);
+                                console.log(res);
+                                var data = res.data;
+                                var frag = doc.createDocumentFragment();
+                                // 渲染问题
+                                if(data.length>0){
+                                    for(var i=0,len=data.length;i<len;i++){
+                                        var item = doc.createElement('li');
+                                        item.setAttribute('questionId',data[i].questionId);
+                                        item.innerHTML = '<p><i class="iconfont icon-fanshe"></i>'+data[i].question+'</p><input type="text" name="addr">';
+                                        frag.appendChild(item);
+                                    }
+                                    oAnswerUl.appendChild(frag);
+                                    oAnswerBox.setAttribute('comId',target.parentNode.getAttribute('comId'));
                                 }
-                                oAnswerUl.appendChild(frag);
+                                // 事件委托点击加入
+                            },
+                            fail: function(err){
+                                console.log('err: '+err);
                             }
-                            // 事件委托点击加入
-                        },
-                        fail: function(err){
-                            console.log('err: '+err);
-                        }
-                    })
+                        })
+                        break;
+                    case 'close-big-btn':
+                    case 'iconfont icon-guanbi1':
+                        this.style.transform = 'scale(0)';
+                        break;
                 }
             };
             oAnswerBox.ontouchstart = function(e){
@@ -822,7 +869,10 @@
                             ajax({
                                 url: '/community/reqToIntoCom',
                                 method: 'post',
-                                data: answerList,
+                                data: {
+                                    answerList: answerList,
+                                    comId: this.getAttribute('comId')
+                                },
                                 contentType: 'application/json',
                                 success: function(res){
                                     res = JSON.parse(res);
@@ -843,7 +893,7 @@
                 }
             }
         },
-        // 通知界面事件委托
+        // '通知'界面事件委托
         handleNotice: function(){
             var oNoticeBox = doc.getElementById('notice-box');
             var oSeeQuestion = doc.getElementById('see-question');
@@ -857,7 +907,7 @@
                     // 查看回答问题信息
                     case 'see-info':
                         oSeeQuestion.style.transform = 'scale(1)';
-                        wannerInComId = target.parentNode.parentNode.parentNode.getAttribute('wannerInComId');
+                        wannerInComId = target.parentNode.parentNode.parentNode.getAttribute('comId');
                         userId = target.parentNode.parentNode.parentNode.getAttribute('userId');
                         // 先清空之前的填补
                         oSeeQueUl.innerHTML = '';
@@ -889,6 +939,27 @@
                     // 直接同意加入
                     case 'join':
                         // 发请求把该同志加入该社群
+                        ajax({
+                            url: '/community/refuseIntoCom',
+                            method: 'get',
+                            data: {
+                                userId: userId,
+                                wannerIntoComId: wannerInComId
+                            },
+                            contentType: 'application/json',
+                            success: function(res){
+                                res = JSON.parse(res);
+                                console.log(res);
+                                handleStipInfo(res.msg);
+                                if(res.status=='success'){
+                                    oSeeQuestion.style.transform='scale(0)';
+                                }
+                                doc.querySelector('#notice-box .join').innerHTML = res.msg;
+                            },
+                            fail: function(err){
+                                console.log(err);
+                            }
+                        });
                         break;
                 }
             };
@@ -916,6 +987,7 @@
                                 if(res.status=='success'){
                                     oSeeQuestion.style.transform='scale(0)';
                                 }
+                                doc.querySelector('#notice-box .join').innerHTML = res.msg;
                             },
                             fail: function(err){
                                 console.log(err);
@@ -1023,6 +1095,51 @@
                 }
             })
         },
+        // 查询‘签到消息’
+        getSignInfo: function(){
+            ajax({
+                url: '/community/getSignInfo',
+                method: 'get',
+                data: {
+                    act: 'getSignInfo'
+                },
+                success: function(res){
+                    res = JSON.parse(res);
+                    console.log(res);
+                    if(res.status == 'success'){    
+                        // 渲染‘签到信息’
+                        Home.prototype.renderSignInfo(res.data);
+                    }else {
+                        handleStipInfo('签到信息拉取失败');
+                    }
+                },
+                fail: function(err){
+                    console.log('err: '+err);
+                }
+            })
+        },
+        // 查询发布历史
+        getPublishHistory: function(){
+            ajax({
+                url: '/community/getPublishHistory',
+                method: 'get',
+                data: '',
+                success: function(res){
+                    res = JSON.parse(res);
+                    console.log(res);
+                    if(res.status == 'success'){
+                        if(res.data.length>0) {
+                            Home.prototype.renderPublishHistory(res.data);
+                        }
+                    }else {
+                        handleStipInfo(res.msg);
+                    }
+                },
+                fail: function(err){
+                    console.log('err: '+err);
+                }
+            })
+        },
         // 查询该用户创建的社群
         getCreatedCom: function(callback){
             ajax({
@@ -1066,17 +1183,55 @@
         // 查询要加入我的社群的成员
         getWannerIntoMyCom: function(){
             ajax({
-                url:'/community/getWannerIntoMyCom',
+                url: '/community/getJoinedCom',
                 method: 'get',
+                data: '',
                 success: function(res){
                     res = JSON.parse(res);
                     console.log(res);
-                    Home.prototype.renderWannerIntoMyCom(res.data);
+                    if(res.status == 'fail') {
+                        handleStipInfo(res.msg);
+                    }else {
+                        // 渲染数据
+                        Home.prototype.renderNotice(res.data);
+                    }
                 },
                 fail: function(err){
-                    console.log('err:'+err);
+                    console.log(err);
                 }
             });
+        },
+        // 渲染‘签到信息’界面
+        renderSignInfo: function(data){
+            var oSignInfoUl = doc.querySelector('#ckeck-info ul'),
+                frag = doc.createDocumentFragment();
+            for(var i=0,len=data.length;i<len;i++){
+                var item = doc.createElement('li');
+                item.innerHTML = '<div class="img"><img src="./'+data[i].comImg+'" alt="img"></div><div class="info"><p>'+data[i].comName+'</p><p><i class="iconfont icon-ditu-dibiao"></i><span>'+data[i].signAddr+'</span></p><p><i class="iconfont icon-icon_zhanghao"></i><span>'+data[i].userName+'</span></p><p><i class="iconfont icon-tixingshixin"></i><time class="start">'+data[i].startTime+'</time>~<time class="end">'+data[i].endTime.split(' ')[1]+'</time></p></div><button class="signIn"></button>';
+                item.setAttribute('comId',data[i].comId);
+                item.setAttribute('publishId',data[i].publishId);
+                item.setAttribute('latitude',data[i].latitude);
+                item.setAttribute('longitude',data[i].longitude);
+                item.setAttribute('signRange',data[i].signRange);
+                frag.appendChild(item);
+            }
+            oSignInfoUl.appendChild(frag);
+        },
+        // 渲染‘发布历史’界面
+        renderPublishHistory: function(data){   
+            var oPublishHistoryUl = doc.querySelector('#publish-history ul'),
+                frag = doc.createDocumentFragment();
+            for(var i=0,len=data.length;i<len;i++){
+                var item = doc.createElement('li');
+                item.innerHTML = '<div class="img"><img src="./'+data[i].comImg+'" alt="img"></div><div class="info"><p>'+data[i].comName+'</p><p><i class="iconfont icon-ditu-dibiao"></i><span>'+data[i].signAddr+'</span></p><p><i class="iconfont icon-icon_zhanghao"></i><span>'+data[i].userName+'</span></p><p><i class="iconfont icon-tixingshixin"></i><time class="start">'+data[i].startTime+'</time>~<time class="end">'+data[i].endTime.split(' ')[1]+'</time></p><p><i class="iconfont icon-shirenrenzheng"></i><span>20/30</span><em>查看</em></p></div><div class="handle"><i class="iconfont icon-shanchutianchong"></i></div>';
+                item.setAttribute('comId',data[i].comId);
+                item.setAttribute('publishId',data[i].publishId);
+                item.setAttribute('signRange',data[i].signRange);
+                item.setAttribute('latitude',data[i].latitude);
+                item.setAttribute('longitude',data[i].longitude);
+                frag.appendChild(item);
+            }
+            oPublishHistoryUl.appendChild(frag);
         },
         // 渲染'社群管理界面'信息
         renderAdminComInfo: function(data){
@@ -1116,8 +1271,23 @@
             }
             oBox.appendChild(frag);
         },
-        handleFaceSign: function(){
+        // 渲染‘通知’界面
+        renderNotice: function(data){
+            var oNoticeUl = doc.querySelector('#notice-box ul'),
+                frag = doc.createDocumentFragment();
+            for(var i=0,len=data.length;i<len;i++){
+                var item = doc.createElement('li');
+                item.innerHTML = '<div class="img"><img src="./'+data[i].comImg+'" alt="img"></div><div class="info"><p>'+data[i].userName+' <span>申请加入</span></p><p><i class="iconfont icon-ditu-dibiao"></i><span>'+data[i].comName+'</span></p><p><i class="iconfont icon-ditu-qipao"></i><span class="see-info" style="color:#aaa;text-decoration:underline">查看信息</span></p></div><button class="join">同意</button>';
+                item.setAttribute('comId',data[i].comId);
+                item.setAttribute('userId',data[i].userId);
+                frag.appendChild(item);
+            }
+            oNoticeUl.appendChild(frag);
+        },
+        // 签到
+        handleFaceSign: function(config){
             console.log('获取人脸');
+            console.log(config);
             var video = doc.getElementById('video'),
                 canvas = doc.getElementById('canvas'),
                 oStartBtn = doc.getElementById('clickPhoto'),
@@ -1193,31 +1363,49 @@
                                         }
                                         // 存入经纬度进行比对
                                         Home.prototype.position(function(lati,longi){
-                                            console.log(lati);
-                                            console.log(longi);
-                                            ajax({
-                                                url: '/user/signToLocation',
-                                                method: 'get',
-                                                data: {
-                                                    latitude: lati,
-                                                    longitude: longi
-                                                },
-                                                contentType: 'application/json',
-                                                success:function(res){
-                                                    res = JSON.parse(res);
-                                                    console.log(res);
-                                                    handleStipInfo(res.msg);
-                                                    aRedSpans[1].style.backgroundColor = 'rgb(155,202,62)';
-                                                    aRedSpans[2].style.backgroundColor = 'rgb(155,202,62)';
-                                                    var timer = setTimeout(function(){
-                                                        clearTimeout(timer);
-                                                        oFaceSignIn.style.transform = 'scale(0)';
-                                                    },2000);
-                                                },
-                                                fail: function(err){
-                                                    console.log(err);
-                                                }
-                                            })
+                                            console.log('用户纬度：'+lati);
+                                            console.log('用户经度：'+longi);
+                                            console.log('目标纬度： '+config.aimLatitude);
+                                            console.log('目标经度： '+ config.aimLongitude);
+                                            console.log('目标范围：' +config.aimRange);
+                                            // aimLatitude: aimLatitude,
+                                            // aimLongitude: aimLongitude,
+                                            // aimRange: aimRange,
+                                            // comId: comId,
+                                            // publishId: publishId
+                                            var distance = Home.prototype.calcSignDis(config.aimLatitude,config.aimLongitude,lati,longi);
+                                            console.log(distance);
+                                            if(distance<=config.aimRange){
+                                                // 签到成功
+                                                ajax({
+                                                    url: '/signIn/signInSuccess',
+                                                    method: 'post',
+                                                    data: {
+                                                        publishId: parseInt(config.publishId),
+                                                        sigStatus: 1,
+                                                        latitude: parseInt(lati.toFixed(4)),
+                                                        longitude: parseInt(longi.toFixed(4)),
+                                                        distance: distance
+                                                    },
+                                                    contentType: 'application/json',
+                                                    success: function(res){
+                                                        res = JSON.parse(res);
+                                                        console.log(res);
+                                                        handleStipInfo(res.msg);
+                                                        if(res.status == 'success'){
+                                                            aRedSpans[1].style.backgroundColor = 'rgb(155,202,62)';
+                                                            aRedSpans[2].style.backgroundColor = 'rgb(155,202,62)';
+                                                            var timer = setTimeout(function(){
+                                                                clearTimeout(timer);
+                                                                oFaceSignIn.style.transform = 'scale(0)';
+                                                            },3000);
+                                                        }
+                                                    }
+                                                })
+                                            }else {
+                                                // 签到失败
+                                                handleStipInfo('在范围外，签到失败');
+                                            }
                                         })
                                     },
                                     fail: function(err){
@@ -1233,6 +1421,22 @@
                         }
                     })
                 }
+            }
+        },
+        // 计算签到距离
+        calcSignDis:function(lati1,long1,lati2,long2){
+            var latiEx1 = Rad(lati1);
+            var latiEx2 = Rad(lati2);
+            var latiDis = latiEx1 - latiEx2;
+            var longiDis = Rad(long1) - Rad(long2);
+            var res = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(latiDis/2),2) + Math.cos(latiEx1)*Math.cos(latiEx2)*Math.pow(Math.sin(longiDis/2),2)));
+            res =res *6378.137 ;// EARTH_RADIUS;
+            res = Math.round(res * 10000) / 10000; //输出为公里
+            console.log(res);
+            return res;
+            function Rad(dis){
+                // 经纬度转换为三角函数中度分表形式
+                return dis*Math.PI/180.0;
             }
         },
         ajaxPost: function(config){
